@@ -1,7 +1,6 @@
 import { FC, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import {
-  MagnifyingGlassIcon,
   ShoppingBagIcon,
   UserIcon,
   TruckIcon,
@@ -17,28 +16,19 @@ import { useWishlist } from "@/contexts/WishlistContext";
 
 export const Header: FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
   const { itemCount } = useCart();
   const { isAuthenticated, user } = useAuth();
   const { location, setLocation, availableLocations } = useDeliveryLocation();
   const { wishlist } = useWishlist();
   const [showLocationMenu, setShowLocationMenu] = useState(false);
-  const navigate = useNavigate();
-  
+
   const wishlistCount = wishlist.length;
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
-    }
-  };
-
   return (
-    <header className="sticky top-0 z-50 bg-white dark:bg-gray-900 shadow-sm dark:shadow-gray-800/50">
+    <header className="sticky top-0 z-50 bg-cream shadow-sm">
       {/* Main Header */}
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-24 gap-4">
+        <div className="flex items-center justify-between h-20 gap-4">
           {/* Logo — SVG rose + Cormorant Garamond italic wordmark */}
           <Link to="/" className="flex-shrink-0 flex items-center gap-3 group">
             {/* Decorative rose SVG */}
@@ -78,26 +68,6 @@ export const Header: FC = () => {
               </span>
             </div>
           </Link>
-
-          {/* Search Bar - Desktop */}
-          <form onSubmit={handleSearch} className="hidden md:flex flex-1 max-w-xl mx-4">
-            <div className="relative w-full">
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="What are you looking for?"
-                className="w-full pl-4 pr-12 py-3 rounded-full border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all"
-              />
-              <button
-                type="submit"
-                aria-label="Search"
-                className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-primary text-white rounded-full hover:bg-primary-600 transition-colors"
-              >
-                <MagnifyingGlassIcon className="w-5 h-5" />
-              </button>
-            </div>
-          </form>
 
           {/* Right Actions */}
           <div className="flex items-center gap-5">
@@ -200,25 +170,6 @@ export const Header: FC = () => {
           </div>
         </div>
 
-        {/* Search Bar - Mobile */}
-        <form onSubmit={handleSearch} className="md:hidden pb-4">
-          <div className="relative w-full">
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="What are you looking for?"
-              className="w-full pl-4 pr-12 py-3 rounded-full border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all"
-            />
-            <button
-              type="submit"
-              aria-label="Search"
-              className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-primary text-white rounded-full hover:bg-primary-600 transition-colors"
-            >
-              <MagnifyingGlassIcon className="w-5 h-5" />
-            </button>
-          </div>
-        </form>
       </div>
 
       {/* Mobile Navigation */}

@@ -47,7 +47,7 @@ export const SectionHeader: FC<SectionHeaderProps> = ({
 
       <h2
         className={`font-heading font-light text-2xl md:text-3xl leading-tight tracking-wide ${
-          inverted ? "text-white" : "text-gray-900 dark:text-gray-100"
+          inverted ? "text-white" : "text-gold"
         }`}
       >
         {title}

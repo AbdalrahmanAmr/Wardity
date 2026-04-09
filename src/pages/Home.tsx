@@ -1,7 +1,16 @@
 import { FC } from "react";
 import { Link } from "react-router-dom";
-import { ChevronRightIcon, TruckIcon, GiftIcon, ShieldCheckIcon } from "@heroicons/react/24/outline";
-import { HeroBanner, ProductCard, OccasionCard, CategoryCard } from "@/components/features";
+import {
+  TruckIcon,
+  GiftIcon,
+  ShieldCheckIcon,
+} from "@heroicons/react/24/outline";
+import {
+  HeroBanner,
+  ProductCard,
+  OccasionCard,
+  CategoryCard,
+} from "@/components/features";
 import { SectionHeader } from "@/components/ui";
 import type { Product, Occasion, Category } from "@/types";
 
@@ -22,7 +31,8 @@ const newYearProducts: Product[] = [
     name: "Passionelle New Year Mini Bucket",
     price: 2761,
     badge: "New",
-    image: "https://images.unsplash.com/photo-1518621736915-f3b1c41bfd00?w=400&h=400&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1518621736915-f3b1c41bfd00?w=400&h=400&fit=crop",
     brandLogo: "Passionelle",
   },
   {
@@ -30,7 +40,8 @@ const newYearProducts: Product[] = [
     name: "Passionelle New Year Wishes Tin",
     price: 3819,
     badge: "New",
-    image: "https://images.unsplash.com/photo-1490750967868-88aa4486c946?w=400&h=400&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1490750967868-88aa4486c946?w=400&h=400&fit=crop",
     brandLogo: "Passionelle",
   },
   {
@@ -38,28 +49,32 @@ const newYearProducts: Product[] = [
     name: "Happy New Year Floral & Chocolate Box",
     price: 2590,
     badge: "New",
-    image: "https://images.unsplash.com/photo-1487530811176-3780de880c2d?w=400&h=400&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1487530811176-3780de880c2d?w=400&h=400&fit=crop",
   },
   {
     id: "prod_004",
     name: "Happy New Year Festive Ruby Pot",
     price: 1391,
     badge: "New",
-    image: "https://images.unsplash.com/photo-1455659817273-f96807779a8a?w=400&h=400&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1455659817273-f96807779a8a?w=400&h=400&fit=crop",
   },
   {
     id: "prod_005",
     name: "Happy New Year Reindeer",
     price: 1196,
     badge: "New",
-    image: "https://images.unsplash.com/photo-1519378058457-4c29a0a2efac?w=400&h=400&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1519378058457-4c29a0a2efac?w=400&h=400&fit=crop",
   },
   {
     id: "prod_006",
     name: "Fleur New Year Cookies Box 18 Pieces",
     price: 2497,
     badge: "New",
-    image: "https://images.unsplash.com/photo-1508610048659-a06b669e3321?w=400&h=400&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1508610048659-a06b669e3321?w=400&h=400&fit=crop",
     brandLogo: "Fleur",
   },
 ];
@@ -70,36 +85,48 @@ const bestSellers: Product[] = [
     name: "Happy New Year Floral & Chocolate Box",
     price: 2590,
     badge: "New",
-    image: "https://images.unsplash.com/photo-1561181286-d3fee7d55364?w=400&h=400&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1561181286-d3fee7d55364?w=400&h=400&fit=crop",
   },
   {
     id: "bs_002",
     name: "Fleur Belgian Chocolate Box & Festive Arrangement",
     price: 4043,
     badge: "New",
-    image: "https://images.unsplash.com/photo-1494972308805-463bc619d34e?w=400&h=400&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1494972308805-463bc619d34e?w=400&h=400&fit=crop",
   },
   {
     id: "bs_003",
     name: "BTC Gold Bar 1 Gram with Red Roses",
     price: 10622,
-    image: "https://images.unsplash.com/photo-1455659817273-f96807779a8a?w=400&h=400&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1455659817273-f96807779a8a?w=400&h=400&fit=crop",
     brandLogo: "BTC",
   },
   {
     id: "bs_004",
     name: "BTC Quarter Gold Pound (2g) with Roses",
     price: 17211,
-    image: "https://images.unsplash.com/photo-1518621736915-f3b1c41bfd00?w=400&h=400&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1518621736915-f3b1c41bfd00?w=400&h=400&fit=crop",
     brandLogo: "BTC",
   },
 ];
 
 const categories: Category[] = [
-  { name: "Hand Bouquets", imageType: "illustration_bouquet", bgColor: "#FFF5F7" },
+  {
+    name: "Hand Bouquets",
+    imageType: "illustration_bouquet",
+    bgColor: "#FFF5F7",
+  },
   { name: "Boxes", imageType: "illustration_box_roses", bgColor: "#FFF5F7" },
   { name: "Vases", imageType: "illustration_vase_flowers", bgColor: "#FFF5F7" },
-  { name: "Plants", imageType: "illustration_potted_plant", bgColor: "#FFF5F7" },
+  {
+    name: "Plants",
+    imageType: "illustration_potted_plant",
+    bgColor: "#FFF5F7",
+  },
 ];
 
 export const Home: FC = () => {
@@ -111,7 +138,10 @@ export const Home: FC = () => {
       {/* Occasions Carousel */}
       <section className="py-12 bg-white dark:bg-gray-900">
         <div className="container mx-auto px-4">
-          <SectionHeader label="Shop by Occasion" title="Occasions" className="mb-8" />
+          <SectionHeader
+            title="Elevate Every Occasion"
+            className="mb-8"
+          />
 
           <div className="flex overflow-x-auto gap-2 md:gap-4 pb-4 scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0 md:grid md:grid-cols-7">
             {occasions.map((occasion) => (
@@ -127,17 +157,17 @@ export const Home: FC = () => {
       <section className="py-12 bg-wardity-bg dark:bg-wardity-bg-dark">
         <div className="container mx-auto px-4">
           <div className="flex items-end justify-between mb-8">
-            <SectionHeader
-              label="Featured Collection"
-              title="New Year, New Moments"
-              subtitle="Celebrate with our festive collection"
-            />
+            <div>
+              <h2 className="font-heading font-light text-2xl md:text-3xl leading-tight tracking-wide text-gold mb-4">
+                New Year, New Moments
+              </h2>
+              <div className="w-16 h-px bg-gold" />
+            </div>
             <Link
               to="/collections/new-year"
-              className="hidden md:flex items-center gap-1 text-primary font-medium hover:underline"
+              className="hidden md:inline text-xs tracking-[0.15em] uppercase text-charcoal border-b border-charcoal/30 pb-0.5 hover:border-charcoal transition-colors"
             >
               View All
-              <ChevronRightIcon className="w-4 h-4" />
             </Link>
           </div>
 
@@ -150,10 +180,9 @@ export const Home: FC = () => {
           <div className="mt-6 text-center md:hidden">
             <Link
               to="/collections/new-year"
-              className="inline-flex items-center gap-1 text-primary font-medium"
+              className="text-xs tracking-[0.15em] uppercase text-charcoal border-b border-charcoal/30 pb-0.5 hover:border-charcoal transition-colors"
             >
               View All Products
-              <ChevronRightIcon className="w-4 h-4" />
             </Link>
           </div>
         </div>
@@ -163,13 +192,17 @@ export const Home: FC = () => {
       <section className="py-12 bg-white dark:bg-gray-900">
         <div className="container mx-auto px-4">
           <div className="flex items-end justify-between mb-8">
-            <SectionHeader label="Most Loved" title="Best Sellers" />
+            <div>
+              <h2 className="font-heading font-light text-2xl md:text-3xl leading-tight tracking-wide text-gold mb-4">
+                Best Sellers
+              </h2>
+              <div className="w-16 h-px bg-gold" />
+            </div>
             <Link
               to="/best-sellers"
-              className="flex items-center gap-1 text-primary font-medium hover:underline"
+              className="text-xs tracking-[0.15em] uppercase text-charcoal border-b border-charcoal/30 pb-0.5 hover:border-charcoal transition-colors"
             >
               View More
-              <ChevronRightIcon className="w-4 h-4" />
             </Link>
           </div>
 
@@ -184,7 +217,7 @@ export const Home: FC = () => {
       {/* Categories */}
       <section className="py-12 bg-wardity-bg dark:bg-wardity-bg-dark">
         <div className="container mx-auto px-4">
-          <SectionHeader label="Browse" title="Categories" className="mb-8" />
+          <SectionHeader title="Categories" className="mb-8" />
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
             {categories.map((category) => (
@@ -197,12 +230,12 @@ export const Home: FC = () => {
       {/* Features / Benefits */}
       <section className="py-16 bg-white dark:bg-gray-900 overflow-hidden">
         <div className="container mx-auto px-4">
-          <SectionHeader
-            label="Why Wardity"
-            title="Our Benefits"
-            align="center"
-            className="mb-12"
-          />
+          <div className="text-center mb-12">
+            <h2 className="font-heading font-light text-2xl md:text-3xl leading-tight tracking-wide text-gold mb-4">
+              Why Wardity
+            </h2>
+            <div className="w-16 h-px bg-gold mx-auto" />
+          </div>
 
           <div className="grid md:grid-cols-2 gap-8 items-center">
             {/* Image */}
@@ -224,21 +257,28 @@ export const Home: FC = () => {
                 <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
                   <TruckIcon className="w-6 h-6 text-primary" />
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">Same-Day Delivery</h3>
+                <h3 className="font-heading font-light text-xl text-gray-900">
+                  Same-Day Delivery
+                </h3>
               </div>
               <p className="text-gray-600 dark:text-gray-400 mb-6 leading-relaxed">
-                Experience same-day flower delivery to Cairo and Giza. Swift shipping, ensuring
-                your sentiments are delivered promptly and your gifts arrive fresh.
+                Experience same-day flower delivery to Cairo and Giza. Swift
+                shipping, ensuring your sentiments are delivered promptly and
+                your gifts arrive fresh.
               </p>
 
               <div className="grid grid-cols-2 gap-4">
-                <div className="flex items-center gap-2 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                  <GiftIcon className="w-5 h-5 text-primary" />
-                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Free Gift Wrapping</span>
+                <div className="flex items-center gap-2 p-3 bg-cream border border-gold/25">
+                  <GiftIcon className="w-5 h-5 text-gold" />
+                  <span className="text-sm font-medium text-gray-700 tracking-wide">
+                    Free Gift Wrapping
+                  </span>
                 </div>
-                <div className="flex items-center gap-2 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                  <ShieldCheckIcon className="w-5 h-5 text-primary" />
-                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300">100% Satisfaction</span>
+                <div className="flex items-center gap-2 p-3 bg-cream border border-gold/25">
+                  <ShieldCheckIcon className="w-5 h-5 text-gold" />
+                  <span className="text-sm font-medium text-gray-700 tracking-wide">
+                    100% Satisfaction
+                  </span>
                 </div>
               </div>
             </div>
@@ -249,7 +289,10 @@ export const Home: FC = () => {
       {/* Newsletter */}
       <section className="relative py-20 bg-charcoal overflow-hidden">
         {/* Floral SVG background overlay */}
-        <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
+        <div
+          className="absolute inset-0 pointer-events-none"
+          aria-hidden="true"
+        >
           <svg
             className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[520px] h-[520px] opacity-[0.06]"
             viewBox="0 0 400 400"
@@ -260,8 +303,10 @@ export const Home: FC = () => {
             {[0, 45, 90, 135, 180, 225, 270, 315].map((angle) => (
               <line
                 key={`stem-${angle}`}
-                x1="200" y1="200"
-                x2="200" y2="18"
+                x1="200"
+                y1="200"
+                x2="200"
+                y2="18"
                 stroke="white"
                 strokeWidth="0.75"
                 transform={`rotate(${angle}, 200, 200)`}
@@ -272,8 +317,10 @@ export const Home: FC = () => {
             {[0, 90, 180, 270].map((angle) => (
               <ellipse
                 key={`bud-${angle}`}
-                cx="200" cy="13"
-                rx="4" ry="7"
+                cx="200"
+                cy="13"
+                rx="4"
+                ry="7"
                 fill="white"
                 opacity="0.55"
                 transform={`rotate(${angle}, 200, 200)`}
@@ -291,15 +338,17 @@ export const Home: FC = () => {
             ))}
 
             {/* Inner petals — 8, narrower, offset 22.5° */}
-            {[22.5, 67.5, 112.5, 157.5, 202.5, 247.5, 292.5, 337.5].map((angle) => (
-              <path
-                key={`inner-${angle}`}
-                d="M200 200 C193 176 193 156 200 144 C207 156 207 176 200 200Z"
-                fill="white"
-                opacity="0.55"
-                transform={`rotate(${angle}, 200, 200)`}
-              />
-            ))}
+            {[22.5, 67.5, 112.5, 157.5, 202.5, 247.5, 292.5, 337.5].map(
+              (angle) => (
+                <path
+                  key={`inner-${angle}`}
+                  d="M200 200 C193 176 193 156 200 144 C207 156 207 176 200 200Z"
+                  fill="white"
+                  opacity="0.55"
+                  transform={`rotate(${angle}, 200, 200)`}
+                />
+              ),
+            )}
 
             {/* Centre disc */}
             <circle cx="200" cy="200" r="17" fill="white" />

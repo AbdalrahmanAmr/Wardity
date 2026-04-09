@@ -86,7 +86,7 @@ export const ProductCard: FC<ProductCardProps> = ({
         {/* Quick Add Button */}
         <button
           onClick={handleAddToCart}
-          className="absolute bottom-3 right-3 w-10 h-10 bg-primary text-white rounded-full flex items-center justify-center shadow-lg opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300 hover:bg-primary-600 z-20"
+          className="absolute bottom-3 right-3 w-10 h-10 bg-charcoal text-white rounded-full flex items-center justify-center shadow-lg opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300 hover:bg-charcoal/80 z-20"
           aria-label="Add to cart"
         >
           <ShoppingBagIcon className="w-5 h-5" />
