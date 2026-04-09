@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, useRef, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import {
   TruckIcon,
@@ -129,23 +129,47 @@ const categories: Category[] = [
   },
 ];
 
+/** Returns thumb width + translateX (px) for a scroll progress indicator. */
+function calcThumb(el: HTMLDivElement): { w: number; x: number } {
+  const { scrollLeft, scrollWidth, clientWidth } = el;
+  if (scrollWidth <= clientWidth) return { w: clientWidth, x: 0 };
+  const w = (clientWidth / scrollWidth) * clientWidth;
+  const x = (scrollLeft / (scrollWidth - clientWidth)) * (clientWidth - w);
+  return { w, x };
+}
+
 export const Home: FC = () => {
+  const newYearRef = useRef<HTMLDivElement>(null);
+  const bestSellersRef = useRef<HTMLDivElement>(null);
+  const [newYearThumb, setNewYearThumb] = useState({ w: 0, x: 0 });
+  const [bestSellersThumb, setBestSellersThumb] = useState({ w: 0, x: 0 });
+
+  useEffect(() => {
+    if (newYearRef.current) setNewYearThumb(calcThumb(newYearRef.current));
+    if (bestSellersRef.current)
+      setBestSellersThumb(calcThumb(bestSellersRef.current));
+  }, []);
+
   return (
     <div className="animate-fade-in">
       {/* Hero Banner */}
       <HeroBanner />
 
-      {/* Occasions Carousel */}
-      <section className="py-12 bg-white dark:bg-gray-900">
+      {/* Occasions */}
+      <section className="py-12 bg-cream border-t border-gold/15">
         <div className="container mx-auto px-4">
           <SectionHeader
+            label="Shop by Moment"
             title="Elevate Every Occasion"
             className="mb-8"
           />
 
-          <div className="flex overflow-x-auto gap-2 md:gap-4 pb-4 scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0 md:grid md:grid-cols-7">
+          <div className="flex overflow-x-auto gap-3 md:gap-6 pb-4 scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0 md:overflow-x-visible md:justify-between">
             {occasions.map((occasion) => (
-              <div key={occasion.name} className="flex-shrink-0 w-24 md:w-auto">
+              <div
+                key={occasion.name}
+                className="flex-shrink-0 w-24 md:flex-shrink md:w-auto"
+              >
                 <OccasionCard occasion={occasion} />
               </div>
             ))}
@@ -157,12 +181,10 @@ export const Home: FC = () => {
       <section className="py-12 bg-wardity-bg dark:bg-wardity-bg-dark">
         <div className="container mx-auto px-4">
           <div className="flex items-end justify-between mb-8">
-            <div>
-              <h2 className="font-heading font-light text-2xl md:text-3xl leading-tight tracking-wide text-gold mb-4">
-                New Year, New Moments
-              </h2>
-              <div className="w-16 h-px bg-gold" />
-            </div>
+            <SectionHeader
+              label="Featured Collection"
+              title="New Year, New Moments"
+            />
             <Link
               to="/collections/new-year"
               className="hidden md:inline text-xs tracking-[0.15em] uppercase text-charcoal border-b border-charcoal/30 pb-0.5 hover:border-charcoal transition-colors"
@@ -171,10 +193,31 @@ export const Home: FC = () => {
             </Link>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-6">
+          {/* Horizontal carousel */}
+          <div
+            ref={newYearRef}
+            onScroll={(e) => setNewYearThumb(calcThumb(e.currentTarget))}
+            className="flex gap-5 overflow-x-auto scrollbar-hide snap-x snap-mandatory"
+          >
             {newYearProducts.map((product) => (
-              <ProductCard key={product.id} product={product} />
+              <div
+                key={product.id}
+                className="flex-shrink-0 w-[260px] md:w-[300px] snap-start"
+              >
+                <ProductCard product={product} />
+              </div>
             ))}
+          </div>
+
+          {/* Gold scroll progress track */}
+          <div className="mt-6 h-[1px] w-full bg-gold/20 relative">
+            <div
+              className="absolute top-0 left-0 h-[1px] bg-gold transition-transform duration-150 ease-out"
+              style={{
+                width: `${newYearThumb.w}px`,
+                transform: `translateX(${newYearThumb.x}px)`,
+              }}
+            />
           </div>
 
           <div className="mt-6 text-center md:hidden">
@@ -192,12 +235,7 @@ export const Home: FC = () => {
       <section className="py-12 bg-white dark:bg-gray-900">
         <div className="container mx-auto px-4">
           <div className="flex items-end justify-between mb-8">
-            <div>
-              <h2 className="font-heading font-light text-2xl md:text-3xl leading-tight tracking-wide text-gold mb-4">
-                Best Sellers
-              </h2>
-              <div className="w-16 h-px bg-gold" />
-            </div>
+            <SectionHeader label="Most Loved" title="Best Sellers" />
             <Link
               to="/best-sellers"
               className="text-xs tracking-[0.15em] uppercase text-charcoal border-b border-charcoal/30 pb-0.5 hover:border-charcoal transition-colors"
@@ -206,20 +244,45 @@ export const Home: FC = () => {
             </Link>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+          {/* Horizontal carousel */}
+          <div
+            ref={bestSellersRef}
+            onScroll={(e) => setBestSellersThumb(calcThumb(e.currentTarget))}
+            className="flex gap-5 overflow-x-auto scrollbar-hide snap-x snap-mandatory"
+          >
             {bestSellers.map((product) => (
-              <ProductCard key={product.id} product={product} />
+              <div
+                key={product.id}
+                className="flex-shrink-0 w-[260px] md:w-[300px] snap-start"
+              >
+                <ProductCard product={product} />
+              </div>
             ))}
+          </div>
+
+          {/* Gold scroll progress track */}
+          <div className="mt-6 h-[1px] w-full bg-gold/20 relative">
+            <div
+              className="absolute top-0 left-0 h-[1px] bg-gold transition-transform duration-150 ease-out"
+              style={{
+                width: `${bestSellersThumb.w}px`,
+                transform: `translateX(${bestSellersThumb.x}px)`,
+              }}
+            />
           </div>
         </div>
       </section>
 
       {/* Categories */}
-      <section className="py-12 bg-wardity-bg dark:bg-wardity-bg-dark">
+      <section className="py-12 bg-wardity-bg border-t border-gold/15">
         <div className="container mx-auto px-4">
-          <SectionHeader title="Categories" className="mb-8" />
+          <SectionHeader
+            label="Explore our Range"
+            title="The Collection"
+            className="mb-8"
+          />
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-5">
             {categories.map((category) => (
               <CategoryCard key={category.name} category={category} />
             ))}
@@ -230,55 +293,56 @@ export const Home: FC = () => {
       {/* Features / Benefits */}
       <section className="py-16 bg-white dark:bg-gray-900 overflow-hidden">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="font-heading font-light text-2xl md:text-3xl leading-tight tracking-wide text-gold mb-4">
-              Why Wardity
-            </h2>
-            <div className="w-16 h-px bg-gold mx-auto" />
-          </div>
+          <SectionHeader
+            label="Our Promise"
+            title="Why Wardity"
+            align="center"
+            className="mb-12"
+          />
 
-          <div className="grid md:grid-cols-2 gap-8 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             {/* Image */}
-            <div className="order-2 md:order-1">
-              <div className="relative">
+            <div className="order-2 lg:order-1">
+              <div className="rounded-xl overflow-hidden shadow-lg aspect-[4/3]">
                 <img
-                  src="https://images.unsplash.com/photo-1607082349566-187342175e2f?w=600&h=400&fit=crop"
-                  alt="Wardity Delivery"
-                  className="rounded-2xl shadow-lg w-full"
+                  src="/src/assets/luxe-bouquet.png"
+                  alt="Wardity luxury flower arrangement"
+                  className="w-full h-full object-cover"
                 />
-                <div className="absolute -bottom-4 -right-4 w-24 h-24 bg-primary/10 rounded-full" />
-                <div className="absolute -top-4 -left-4 w-16 h-16 bg-primary/5 rounded-full" />
               </div>
             </div>
 
             {/* Content */}
-            <div className="order-1 md:order-2">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
-                  <TruckIcon className="w-6 h-6 text-primary" />
+            <div className="order-1 lg:order-2">
+              <div className="flex items-center gap-3 mb-5">
+                <div className="w-10 h-10 border border-gold/30 bg-champagne/50 flex items-center justify-center flex-shrink-0">
+                  <TruckIcon className="w-5 h-5 text-gold" />
                 </div>
-                <h3 className="font-heading font-light text-xl text-gray-900">
+                <h3 className="font-heading font-light text-xl tracking-wide text-charcoal">
                   Same-Day Delivery
                 </h3>
               </div>
-              <p className="text-gray-600 dark:text-gray-400 mb-6 leading-relaxed">
+
+              <p className="text-gray-600 leading-relaxed tracking-wide text-sm">
                 Experience same-day flower delivery to Cairo and Giza. Swift
                 shipping, ensuring your sentiments are delivered promptly and
                 your gifts arrive fresh.
               </p>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div className="flex items-center gap-2 p-3 bg-cream border border-gold/25">
-                  <GiftIcon className="w-5 h-5 text-gold" />
-                  <span className="text-sm font-medium text-gray-700 tracking-wide">
-                    Free Gift Wrapping
-                  </span>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-8">
+                <div className="flex items-center gap-3 p-4 bg-white border border-gold/20">
+                  <GiftIcon className="w-5 h-5 text-gold flex-shrink-0" />
+                  <div>
+                    <p className="text-xs tracking-[0.12em] uppercase text-charcoal/50 font-sans mb-0.5">Complimentary</p>
+                    <p className="text-sm text-charcoal tracking-wide">Gift Wrapping</p>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2 p-3 bg-cream border border-gold/25">
-                  <ShieldCheckIcon className="w-5 h-5 text-gold" />
-                  <span className="text-sm font-medium text-gray-700 tracking-wide">
-                    100% Satisfaction
-                  </span>
+                <div className="flex items-center gap-3 p-4 bg-white border border-gold/20">
+                  <ShieldCheckIcon className="w-5 h-5 text-gold flex-shrink-0" />
+                  <div>
+                    <p className="text-xs tracking-[0.12em] uppercase text-charcoal/50 font-sans mb-0.5">Guaranteed</p>
+                    <p className="text-sm text-charcoal tracking-wide">100% Satisfaction</p>
+                  </div>
                 </div>
               </div>
             </div>

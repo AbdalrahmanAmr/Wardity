@@ -7,7 +7,7 @@ interface SectionHeaderProps {
   title: string;
   /** Optional supporting copy below the title */
   subtitle?: string;
-  /** Horizontal alignment — centered variant shows the gold decorative rule */
+  /** Horizontal alignment — centered puts rule between label and title; left puts rule below title */
   align?: "left" | "center";
   /** White text mode for dark or coloured section backgrounds */
   inverted?: boolean;
@@ -36,8 +36,8 @@ export const SectionHeader: FC<SectionHeaderProps> = ({
         </p>
       )}
 
-      {/* Decorative rule — only for centered layout with a label present */}
-      {centered && label && (
+      {/* Centered: rule sits between label and title */}
+      {centered && (
         <div
           className={`w-16 h-px mx-auto mb-4 ${
             inverted ? "bg-white/40" : "bg-gold"
@@ -52,6 +52,15 @@ export const SectionHeader: FC<SectionHeaderProps> = ({
       >
         {title}
       </h2>
+
+      {/* Left-aligned: rule sits below the title */}
+      {!centered && (
+        <div
+          className={`w-16 h-px mt-3 ${
+            inverted ? "bg-white/40" : "bg-gold"
+          }`}
+        />
+      )}
 
       {subtitle && (
         <p

@@ -3,24 +3,19 @@ import { Link } from "react-router-dom";
 import {
   ShoppingBagIcon,
   UserIcon,
-  TruckIcon,
   Bars3Icon,
   XMarkIcon,
-  ChevronDownIcon,
   HeartIcon,
 } from "@heroicons/react/24/outline";
 import { useCart } from "@/contexts/CartContext";
 import { useAuth } from "@/contexts/AuthContext";
-import { useDeliveryLocation } from "@/contexts/DeliveryLocationContext";
 import { useWishlist } from "@/contexts/WishlistContext";
 
 export const Header: FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { itemCount } = useCart();
   const { isAuthenticated, user } = useAuth();
-  const { location, setLocation, availableLocations } = useDeliveryLocation();
   const { wishlist } = useWishlist();
-  const [showLocationMenu, setShowLocationMenu] = useState(false);
 
   const wishlistCount = wishlist.length;
 
@@ -71,66 +66,36 @@ export const Header: FC = () => {
 
           {/* Right Actions */}
           <div className="flex items-center gap-5">
-            {/* Delivery Location */}
-            <div className="hidden lg:block relative">
-              <button
-                onClick={() => setShowLocationMenu(!showLocationMenu)}
-                className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-50 transition-colors"
-              >
-                <TruckIcon className="w-5 h-5 text-primary" />
-                <div className="text-left">
-                  <p className="text-[10px] text-gray-500">Delivery To</p>
-                  <p className="text-sm font-medium flex items-center gap-1">
-                    {location.name}
-                    <ChevronDownIcon className="w-3 h-3" />
-                  </p>
-                </div>
-              </button>
-              {showLocationMenu && (
-                <div className="absolute top-full right-0 mt-2 bg-white rounded-lg shadow-lg border border-gray-200 min-w-[200px] z-50">
-                  {availableLocations.map((loc) => (
-                    <button
-                      key={loc.id}
-                      onClick={() => {
-                        setLocation(loc);
-                        setShowLocationMenu(false);
-                      }}
-                      className={`w-full text-left px-4 py-2 hover:bg-gray-50 transition-colors ${
-                        location.id === loc.id ? "bg-primary/5 text-primary" : ""
-                      }`}
-                    >
-                      {loc.name}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-
             {/* User Menu */}
             {isAuthenticated ? (
               <Link
                 to="/profile"
-                className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                className="flex items-center gap-2 px-3 py-2 hover:bg-champagne/60 transition-colors"
               >
-                <UserIcon className="w-5 h-5 text-gray-600 dark:text-gray-300" />
-                <span className="hidden sm:block text-sm font-medium text-gray-700 dark:text-gray-200">
-                  {user?.name || "Account"}
+                {/* Monogram circle */}
+                <div className="w-8 h-8 rounded-full border border-gold/40 bg-champagne flex items-center justify-center flex-shrink-0">
+                  <span className="text-xs font-heading italic text-charcoal">
+                    {(user?.name ?? "A").split(" ")[0][0].toUpperCase()}
+                  </span>
+                </div>
+                <span className="hidden sm:block text-sm font-medium text-gray-700">
+                  {(user?.name ?? "Account").split(" ")[0]}
                 </span>
               </Link>
             ) : (
               <Link
                 to="/login"
-                className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                className="flex items-center gap-2 px-3 py-2 hover:bg-champagne/60 transition-colors"
               >
-                <UserIcon className="w-5 h-5 text-gray-600 dark:text-gray-300" />
-                <span className="hidden sm:block text-sm font-medium text-gray-700 dark:text-gray-200">Login</span>
+                <UserIcon className="w-5 h-5 text-gray-600" />
+                <span className="hidden sm:block text-sm font-medium text-gray-700">My Account</span>
               </Link>
             )}
 
             {/* Wishlist */}
             <Link
               to="/wishlist"
-              className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors relative"
+              className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-champagne/60 transition-colors relative"
             >
               <HeartIcon className="w-6 h-6 text-gray-600 dark:text-gray-300" />
               <span className="hidden sm:block text-sm font-medium text-gray-700 dark:text-gray-200">Wishlist</span>
@@ -174,23 +139,13 @@ export const Header: FC = () => {
 
       {/* Mobile Navigation */}
       {isMenuOpen && (
-        <div className="md:hidden bg-white dark:bg-gray-900 border-t border-gray-100 dark:border-gray-800 animate-slide-down">
+        <div className="md:hidden bg-cream border-t border-gold/10 animate-slide-down">
           <div className="container mx-auto px-4 py-4">
-            {/* Delivery Location - Mobile */}
-            <button className="flex items-center gap-2 w-full px-4 py-3 rounded-lg bg-gray-50 dark:bg-gray-800 mb-4">
-              <TruckIcon className="w-5 h-5 text-primary" />
-              <div className="text-left flex-1">
-                <p className="text-[10px] text-gray-500 dark:text-gray-400">Delivery To</p>
-                <p className="text-sm font-medium text-gray-900 dark:text-gray-100">Greater Cairo</p>
-              </div>
-              <ChevronDownIcon className="w-4 h-4 text-gray-400 dark:text-gray-500" />
-            </button>
-
             {/* Wishlist - Mobile */}
             <Link
               to="/wishlist"
               onClick={() => setIsMenuOpen(false)}
-              className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors mb-2"
+              className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-champagne/60 transition-colors mb-2"
             >
               <HeartIcon className="w-5 h-5 text-gray-600 dark:text-gray-300" />
               <span className="text-sm font-medium text-gray-700 dark:text-gray-200">Wishlist</span>

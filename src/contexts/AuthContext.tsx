@@ -1,4 +1,11 @@
-import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+  ReactNode,
+} from "react";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { STORAGE_KEYS } from "@/constants/storage";
 import { api } from "@/services/api";
@@ -28,8 +35,14 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [storedUser, setStoredUser] = useLocalStorage<User | null>(STORAGE_KEYS.USER, null);
-  const [storedToken, setStoredToken] = useLocalStorage<string | null>(STORAGE_KEYS.TOKEN, null);
+  const [storedUser, setStoredUser] = useLocalStorage<User | null>(
+    STORAGE_KEYS.USER,
+    null,
+  );
+  const [storedToken, setStoredToken] = useLocalStorage<string | null>(
+    STORAGE_KEYS.TOKEN,
+    null,
+  );
   const [user, setUser] = useState<User | null>(storedUser);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -59,10 +72,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     async (email: string, password: string) => {
       setIsLoading(true);
       try {
-        const response = await api.post<ApiResponse<{ user: User; token: string }>, { email: string; password: string }>(
-          "/auth/login",
-          { email, password }
-        );
+        const response = await api.post<
+          ApiResponse<{ user: User; token: string }>,
+          { email: string; password: string }
+        >("/auth/login", { email, password });
 
         const { user: userData, token } = response.data;
 
@@ -75,17 +88,17 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         setIsLoading(false);
       }
     },
-    [setStoredUser, setStoredToken]
+    [setStoredUser, setStoredToken],
   );
 
   const register = useCallback(
     async (email: string, password: string, name: string) => {
       setIsLoading(true);
       try {
-        const response = await api.post<ApiResponse<{ user: User; token: string }>, { email: string; password: string; name: string }>(
-          "/auth/register",
-          { email, password, name }
-        );
+        const response = await api.post<
+          ApiResponse<{ user: User; token: string }>,
+          { email: string; password: string; name: string }
+        >("/auth/register", { email, password, name });
 
         const { user: userData, token } = response.data;
 
@@ -98,7 +111,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         setIsLoading(false);
       }
     },
-    [setStoredUser, setStoredToken]
+    [setStoredUser, setStoredToken],
   );
 
   const logout = useCallback(() => {
@@ -111,7 +124,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     async (userData: Partial<User>) => {
       if (user) {
         try {
-          const response = await api.patch<ApiResponse<User>, Partial<User>>("/auth/profile", userData);
+          const response = await api.patch<ApiResponse<User>, Partial<User>>(
+            "/auth/profile",
+            userData,
+          );
           const updatedUser = response.data;
           setUser(updatedUser);
           setStoredUser(updatedUser);
@@ -124,7 +140,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         }
       }
     },
-    [user, setStoredUser]
+    [user, setStoredUser],
   );
 
   const value: AuthContextType = {
@@ -147,4 +163,3 @@ export const useAuth = (): AuthContextType => {
   }
   return context;
 };
-

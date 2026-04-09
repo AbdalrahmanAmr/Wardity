@@ -3,7 +3,12 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { ErrorBlock } from "@/components/ui/ErrorBlock";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
-import { UserIcon, EnvelopeIcon, PhoneIcon } from "@heroicons/react/24/outline";
+
+const inputClass =
+  "bg-transparent border-0 border-b border-charcoal/20 w-full py-3 text-sm tracking-wide text-charcoal placeholder-charcoal/30 focus:outline-none focus:border-gold transition-colors duration-200";
+
+const labelClass =
+  "text-[10px] tracking-[0.15em] uppercase text-charcoal/50 font-sans mb-2 block";
 
 export const Profile: FC = () => {
   const { user, updateUser, logout } = useAuth();
@@ -26,7 +31,6 @@ export const Profile: FC = () => {
     e.preventDefault();
     setError(null);
     setIsSubmitting(true);
-
     try {
       updateUser(formData);
       setIsEditing(false);
@@ -42,144 +46,171 @@ export const Profile: FC = () => {
     navigate("/");
   };
 
+  const handleCancelEdit = (): void => {
+    setIsEditing(false);
+    setError(null);
+    setFormData({
+      name: user?.name || "",
+      email: user?.email || "",
+      phone: user?.phone || "",
+    });
+  };
+
+  const firstInitial = (user.name ?? "A").trim()[0].toUpperCase();
+
   return (
-    <div className="min-h-screen bg-wardity-bg py-12">
+    <div className="min-h-screen bg-cream py-16">
       <div className="container mx-auto px-4">
-        <div className="max-w-2xl mx-auto">
-          <h1 className="text-3xl font-bold text-gray-900 mb-8">My Profile</h1>
+        <div className="max-w-lg mx-auto">
+
+          {/* Page heading */}
+          <h1 className="font-heading font-light text-3xl tracking-wide text-charcoal">
+            My Account
+          </h1>
+          <div className="w-12 h-px bg-gold mt-3 mb-10" />
 
           {error && (
-            <div className="mb-6">
+            <div className="mb-8">
               <ErrorBlock message={error} />
             </div>
           )}
 
-          <div className="bg-white rounded-xl p-6 shadow-sm">
-            {!isEditing ? (
-              <div className="space-y-6">
-                <div className="flex items-center gap-4">
-                  <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center">
-                    <UserIcon className="w-10 h-10 text-primary" />
-                  </div>
-                  <div>
-                    <h2 className="text-2xl font-bold text-gray-900">{user.name}</h2>
-                    <p className="text-gray-600">{user.email}</p>
-                  </div>
+          {!isEditing ? (
+            /* ── View mode ── */
+            <div>
+              {/* Avatar + name */}
+              <div className="flex items-center gap-5 mb-10">
+                <div className="w-16 h-16 border border-gold/30 bg-champagne flex items-center justify-center flex-shrink-0">
+                  <span className="font-heading italic text-2xl text-charcoal">
+                    {firstInitial}
+                  </span>
                 </div>
-
-                <div className="space-y-4 pt-6 border-t border-gray-200">
-                  <div className="flex items-center gap-3">
-                    <EnvelopeIcon className="w-5 h-5 text-gray-400" />
-                    <div>
-                      <p className="text-sm text-gray-500">Email</p>
-                      <p className="font-medium text-gray-900">{user.email}</p>
-                    </div>
-                  </div>
-                  {user.phone && (
-                    <div className="flex items-center gap-3">
-                      <PhoneIcon className="w-5 h-5 text-gray-400" />
-                      <div>
-                        <p className="text-sm text-gray-500">Phone</p>
-                        <p className="font-medium text-gray-900">{user.phone}</p>
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                <div className="flex gap-4 pt-6 border-t border-gray-200">
-                  <button
-                    onClick={() => setIsEditing(true)}
-                    className="flex-1 bg-primary text-white py-3 rounded-lg font-semibold hover:bg-primary-600 transition-colors"
-                  >
-                    Edit Profile
-                  </button>
-                  <button
-                    onClick={handleLogout}
-                    className="flex-1 bg-gray-200 text-gray-700 py-3 rounded-lg font-semibold hover:bg-gray-300 transition-colors"
-                  >
-                    Logout
-                  </button>
+                <div>
+                  <p className="font-heading font-light text-xl text-charcoal tracking-wide">
+                    {user.name}
+                  </p>
+                  <p className="text-xs text-charcoal/40 tracking-wide mt-0.5">{user.email}</p>
                 </div>
               </div>
-            ) : (
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div>
-                  <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+
+              {/* Info fields */}
+              <div className="space-y-6">
+                <div className="border-b border-gold/10 pb-4">
+                  <p className="text-[10px] tracking-[0.15em] uppercase text-charcoal/40 mb-1">
                     Full Name
-                  </label>
-                  <input
-                    id="name"
-                    type="text"
-                    value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    required
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none"
-                  />
+                  </p>
+                  <p className="text-sm text-charcoal tracking-wide">{user.name}</p>
                 </div>
 
-                <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                    Email
-                  </label>
-                  <input
-                    id="email"
-                    type="email"
-                    value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    required
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none"
-                  />
+                <div className="border-b border-gold/10 pb-4">
+                  <p className="text-[10px] tracking-[0.15em] uppercase text-charcoal/40 mb-1">
+                    Email Address
+                  </p>
+                  <p className="text-sm text-charcoal tracking-wide">{user.email}</p>
                 </div>
 
-                <div>
-                  <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
+                <div className="border-b border-gold/10 pb-4">
+                  <p className="text-[10px] tracking-[0.15em] uppercase text-charcoal/40 mb-1">
                     Phone
-                  </label>
-                  <input
-                    id="phone"
-                    type="tel"
-                    value={formData.phone}
-                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none"
-                  />
+                  </p>
+                  <p className="text-sm text-charcoal tracking-wide">
+                    {user.phone || <span className="text-charcoal/30 italic">Not provided</span>}
+                  </p>
                 </div>
+              </div>
 
-                <div className="flex gap-4">
-                  <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="flex-1 bg-primary text-white py-3 rounded-lg font-semibold hover:bg-primary-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-                  >
-                    {isSubmitting ? (
-                      <>
-                        <LoadingSpinner size="sm" />
-                        Saving...
-                      </>
-                    ) : (
-                      "Save Changes"
-                    )}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setIsEditing(false);
-                      setFormData({
-                        name: user?.name || "",
-                        email: user?.email || "",
-                        phone: user?.phone || "",
-                      });
-                    }}
-                    className="flex-1 bg-gray-200 text-gray-700 py-3 rounded-lg font-semibold hover:bg-gray-300 transition-colors"
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </form>
-            )}
-          </div>
+              {/* Actions */}
+              <div className="flex items-center justify-between mt-10">
+                <button
+                  onClick={() => setIsEditing(true)}
+                  className="border border-charcoal text-charcoal text-xs tracking-[0.18em] uppercase px-8 py-3 hover:bg-charcoal hover:text-cream transition-all duration-300"
+                >
+                  Edit Profile
+                </button>
+
+                <button
+                  onClick={handleLogout}
+                  className="text-xs tracking-[0.15em] uppercase text-charcoal/40 border-b border-charcoal/20 pb-0.5 hover:text-primary hover:border-primary transition-colors"
+                >
+                  Log out
+                </button>
+              </div>
+            </div>
+          ) : (
+            /* ── Edit mode ── */
+            <form onSubmit={handleSubmit} className="space-y-8">
+
+              <div>
+                <label htmlFor="name" className={labelClass}>
+                  Full Name
+                </label>
+                <input
+                  id="name"
+                  type="text"
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  required
+                  className={inputClass}
+                />
+              </div>
+
+              <div>
+                <label htmlFor="email" className={labelClass}>
+                  Email Address
+                </label>
+                <input
+                  id="email"
+                  type="email"
+                  value={formData.email}
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  required
+                  className={inputClass}
+                />
+              </div>
+
+              <div>
+                <label htmlFor="phone" className={labelClass}>
+                  Phone
+                </label>
+                <input
+                  id="phone"
+                  type="tel"
+                  value={formData.phone}
+                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                  placeholder="+20 1xx xxx xxxx"
+                  className={inputClass}
+                />
+              </div>
+
+              {/* Form actions */}
+              <div className="flex items-center justify-between pt-2">
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="border border-charcoal text-charcoal text-xs tracking-[0.18em] uppercase px-8 py-3 hover:bg-charcoal hover:text-cream transition-all duration-300 disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-2"
+                >
+                  {isSubmitting ? (
+                    <>
+                      <LoadingSpinner size="sm" />
+                      Saving…
+                    </>
+                  ) : (
+                    "Save Changes"
+                  )}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleCancelEdit}
+                  className="text-xs tracking-[0.15em] uppercase text-charcoal/40 border-b border-charcoal/20 pb-0.5 hover:text-charcoal hover:border-charcoal transition-colors"
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          )}
         </div>
       </div>
     </div>
   );
 };
-
