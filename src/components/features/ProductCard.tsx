@@ -53,19 +53,21 @@ export const ProductCard: FC<ProductCardProps> = ({
   return (
     <Link
       to={`/product/${product.id}`}
-      className="group block bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-sm dark:shadow-gray-900/50 hover:shadow-xl dark:hover:shadow-gray-900 transition-all duration-300 card-hover cursor-pointer"
+      className="group block bg-white dark:bg-gray-800 rounded-2xl overflow-hidden border border-gray-100 dark:border-gray-700/50 shadow-sm dark:shadow-gray-900/50 hover:border-gold/40 hover:shadow-xl dark:hover:shadow-gray-900 transition-all duration-300 card-hover cursor-pointer"
     >
       {/* Image Container */}
       <div className="relative aspect-square overflow-hidden bg-gray-50 dark:bg-gray-700">
         <img
-          src={product.image || `https://placehold.co/400x400/FFF0F3/D02046?text=${encodeURIComponent(product.name.slice(0, 10))}`}
+          src={product.image || `https://placehold.co/400x400/FAF7F2/D02046?text=${encodeURIComponent(product.name.slice(0, 10))}`}
           alt={product.name}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
         />
 
         {/* Badge */}
         {product.badge && (
-          <span className="badge-new z-10">{product.badge}</span>
+          <span className="absolute top-3 left-3 z-10 bg-charcoal text-champagne text-[9px] font-medium tracking-widest uppercase px-2.5 py-[3px]">
+            {product.badge}
+          </span>
         )}
 
         {/* Wishlist Button */}
@@ -104,8 +106,8 @@ export const ProductCard: FC<ProductCardProps> = ({
           {product.name}
         </h3>
         <div className="mt-2 flex items-center justify-between">
-          <p className="text-lg font-bold text-primary">
-            {product.price.toLocaleString()} <span className="text-sm font-normal">EGP</span>
+          <p className="text-lg font-semibold text-gold">
+            {product.price.toLocaleString()} <span className="text-sm font-normal text-gold/70">EGP</span>
           </p>
         </div>
       </div>

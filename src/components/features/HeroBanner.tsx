@@ -14,102 +14,116 @@ interface HeroSlide {
 const heroSlides: HeroSlide[] = [
   {
     id: "1",
-    headline: "Roses meet Fleur chocolate love takes shape",
-    ctaText: "Gift Now",
+    headline: "Roses meet Fleur — chocolate love takes shape",
+    ctaText: "Discover the Collection",
     ctaLink: "/collections/love-collection",
-    image: "https://images.unsplash.com/photo-1518621736915-f3b1c41bfd00?w=1200&h=600&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1518621736915-f3b1c41bfd00?w=1200&h=600&fit=crop",
   },
   {
     id: "2",
     headline: "New Year, New Beginnings",
     subHeadline: "Celebrate with our festive collection",
-    ctaText: "Shop Now",
+    ctaText: "Explore Now",
     ctaLink: "/collections/new-year",
-    image: "https://images.unsplash.com/photo-1490750967868-88aa4486c946?w=1200&h=600&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1490750967868-88aa4486c946?w=1200&h=600&fit=crop",
   },
   {
     id: "3",
     headline: "Express Your Love",
     subHeadline: "With our premium bouquets",
-    ctaText: "Explore",
+    ctaText: "Explore Now",
     ctaLink: "/categories/bouquets",
-    image: "https://images.unsplash.com/photo-1487530811176-3780de880c2d?w=1200&h=600&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1487530811176-3780de880c2d?w=1200&h=600&fit=crop",
   },
 ];
 
 export const HeroBanner: FC = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
 
-  const nextSlide = () => {
+  const nextSlide = (): void =>
     setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
-  };
 
-  const prevSlide = () => {
+  const prevSlide = (): void =>
     setCurrentSlide((prev) => (prev - 1 + heroSlides.length) % heroSlides.length);
-  };
-
-  const slide = heroSlides[currentSlide];
 
   return (
     <section className="relative overflow-hidden">
-      {/* Background */}
       <div className="relative h-[400px] md:h-[500px] lg:h-[600px]">
-        {/* Image */}
-        <div
-          className="absolute inset-0 bg-cover bg-center transition-all duration-700"
-          style={{ backgroundImage: `url(${slide?.image})` }}
-        >
-          {/* Overlay */}
-          <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-transparent" />
-        </div>
 
-        {/* Content */}
-        <div className="relative container mx-auto px-4 h-full flex items-center">
-          <div className="max-w-xl text-white animate-fade-in">
-            <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold leading-tight mb-4">
-              {slide?.headline}
-            </h1>
-            {slide?.subHeadline && (
-              <p className="text-lg md:text-xl text-white/90 mb-6">
-                {slide.subHeadline}
-              </p>
-            )}
-            <Link
-              to={slide?.ctaLink || "/"}
-              className="inline-flex items-center gap-2 bg-primary text-white px-8 py-4 rounded-full font-semibold hover:bg-primary-600 transition-all shadow-lg hover:shadow-xl hover:scale-105"
-            >
-              {slide?.ctaText}
-              <ChevronRightIcon className="w-5 h-5" />
-            </Link>
+        {/* Slide backgrounds — all rendered, only active is visible */}
+        {heroSlides.map((slide, index) => (
+          <div
+            key={slide.id}
+            className="absolute inset-0 bg-cover bg-center transition-opacity duration-700 ease-in-out"
+            style={{
+              backgroundImage: `url(${slide.image})`,
+              opacity: index === currentSlide ? 1 : 0,
+            }}
+          >
+            {/* Subtle directional overlay — just enough to keep text legible */}
+            <div className="absolute inset-0 bg-gradient-to-r from-black/30 via-black/10 to-transparent" />
           </div>
-        </div>
+        ))}
 
-        {/* Navigation Arrows */}
+        {/* Slide content — fades in sync with its background */}
+        {heroSlides.map((slide, index) => (
+          <div
+            key={slide.id}
+            className="absolute inset-0 flex items-center transition-opacity duration-700 ease-in-out"
+            style={{ opacity: index === currentSlide ? 1 : 0 }}
+          >
+            <div className="container mx-auto px-6 md:px-10">
+              <div className="max-w-2xl text-white">
+                <h1 className="font-heading font-light text-4xl md:text-5xl lg:text-[3.75rem] leading-[1.1] tracking-wide mb-5 text-balance">
+                  {slide.headline}
+                </h1>
+                {slide.subHeadline && (
+                  <p className="text-base md:text-lg text-white/75 mb-8 font-light tracking-wide">
+                    {slide.subHeadline}
+                  </p>
+                )}
+                <Link
+                  to={slide.ctaLink}
+                  tabIndex={index !== currentSlide ? -1 : 0}
+                  className="inline-flex items-center gap-3 border border-white/70 text-white text-xs tracking-[0.18em] uppercase px-8 py-3.5 hover:bg-white hover:text-charcoal hover:border-white transition-all duration-300"
+                >
+                  {slide.ctaText}
+                  <ChevronRightIcon className="w-3.5 h-3.5" />
+                </Link>
+              </div>
+            </div>
+          </div>
+        ))}
+
+        {/* Navigation arrows — square, outlined to match CTA aesthetic */}
         <button
           onClick={prevSlide}
-          className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-white/30 transition-colors"
+          className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 border border-white/40 flex items-center justify-center text-white hover:bg-white/15 hover:border-white/70 transition-all duration-200 backdrop-blur-sm"
           aria-label="Previous slide"
         >
-          <ChevronLeftIcon className="w-6 h-6" />
+          <ChevronLeftIcon className="w-4 h-4" />
         </button>
         <button
           onClick={nextSlide}
-          className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-white/30 transition-colors"
+          className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 border border-white/40 flex items-center justify-center text-white hover:bg-white/15 hover:border-white/70 transition-all duration-200 backdrop-blur-sm"
           aria-label="Next slide"
         >
-          <ChevronRightIcon className="w-6 h-6" />
+          <ChevronRightIcon className="w-4 h-4" />
         </button>
 
-        {/* Dots */}
-        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2">
+        {/* Dot indicators — thin dashes to match editorial feel */}
+        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2">
           {heroSlides.map((_, index) => (
             <button
               key={index}
               onClick={() => setCurrentSlide(index)}
-              className={`w-3 h-3 rounded-full transition-all ${
+              className={`h-[2px] transition-all duration-500 ${
                 index === currentSlide
-                  ? "bg-white w-8"
-                  : "bg-white/50 hover:bg-white/70"
+                  ? "w-8 bg-white"
+                  : "w-4 bg-white/40 hover:bg-white/65"
               }`}
               aria-label={`Go to slide ${index + 1}`}
             />
@@ -119,4 +133,3 @@ export const HeroBanner: FC = () => {
     </section>
   );
 };
-

@@ -5,12 +5,20 @@
 /* Base styles */
 @layer base {
   html {
-    font-family: "Inter", system-ui, sans-serif;
+    font-family: "Jost", "DM Sans", system-ui, sans-serif;
     scroll-behavior: smooth;
   }
 
   body {
     @apply bg-wardity-bg dark:bg-wardity-bg-dark text-wardity-text dark:text-wardity-text-dark antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: "Cormorant Garamond", "Playfair Display", Georgia, serif;
+    @apply font-semibold tracking-tight;
   }
 
   /* Better focus styles */
@@ -55,6 +63,27 @@
   }
 
   .badge-new {
-    @apply absolute top-3 left-3 bg-primary text-white text-xs font-bold px-2 py-1 rounded;
+    @apply absolute top-3 left-3 bg-charcoal text-champagne text-[9px] font-medium tracking-widest uppercase px-2.5 py-[3px];
+  }
+
+  /* Gold accent utilities — prices, premium badges, decorative elements */
+  .price-text {
+    @apply text-gold font-semibold tracking-wide;
+  }
+
+  .badge-premium {
+    @apply inline-flex items-center gap-1 bg-gold text-white text-xs font-bold px-2.5 py-1 rounded-full;
+  }
+
+  .badge-premium-outline {
+    @apply inline-flex items-center gap-1 border border-gold text-gold text-xs font-semibold px-2.5 py-1 rounded-full;
+  }
+
+  .divider-gold {
+    @apply border-t border-gold/30;
+  }
+
+  .gradient-gold {
+    @apply bg-gradient-to-r from-gold-dark via-gold to-gold-light bg-clip-text text-transparent;
   }
 }

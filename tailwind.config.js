@@ -5,7 +5,8 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ["Inter", "system-ui", "sans-serif"],
+        heading: ["Cormorant Garamond", "Playfair Display", "Georgia", "serif"],
+        sans: ["Jost", "DM Sans", "system-ui", "sans-serif"],
       },
       colors: {
         // Wardity Rose Theme
@@ -28,12 +29,22 @@ export default {
           DEFAULT: "#D02046",
           dark: "#A61435",
         },
+        // Luxury accent palette
+        gold: {
+          DEFAULT: "#C9A96E",
+          light: "#E8D5B0",
+          dark: "#A07C42",
+        },
+        champagne: "#F5ECD7",
+        charcoal: "#1C1C1E",
+        cream: "#FAF7F2",
         success: "#28a745",
         wardity: {
-          bg: "#FFF0F3",
+          bg: "#FAF7F2",
           card: "#FFFFFF",
           text: "#333333",
           accent: "#D02046",
+          gold: "#C9A96E",
           // Dark mode colors
           "bg-dark": "#1a1a1a",
           "card-dark": "#2d2d2d",
@@ -83,8 +94,8 @@ export default {
           accent: "#D02046",
           neutral: "#333333",
           "base-100": "#FFFFFF",
-          "base-200": "#FFF0F3",
-          "base-300": "#F8C3CD",
+          "base-200": "#FAF7F2",
+          "base-300": "#F5ECD7",
           info: "#3b82f6",
           success: "#28a745",
           warning: "#f59e0b",

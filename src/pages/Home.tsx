@@ -2,6 +2,7 @@ import { FC } from "react";
 import { Link } from "react-router-dom";
 import { ChevronRightIcon, TruckIcon, GiftIcon, ShieldCheckIcon } from "@heroicons/react/24/outline";
 import { HeroBanner, ProductCard, OccasionCard, CategoryCard } from "@/components/features";
+import { SectionHeader } from "@/components/ui";
 import type { Product, Occasion, Category } from "@/types";
 
 // Mock data from JSON
@@ -110,9 +111,7 @@ export const Home: FC = () => {
       {/* Occasions Carousel */}
       <section className="py-12 bg-white dark:bg-gray-900">
         <div className="container mx-auto px-4">
-          <div className="mb-8">
-            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-gray-100">Occasions</h2>
-          </div>
+          <SectionHeader label="Shop by Occasion" title="Occasions" className="mb-8" />
 
           <div className="flex overflow-x-auto gap-2 md:gap-4 pb-4 scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0 md:grid md:grid-cols-7">
             {occasions.map((occasion) => (
@@ -127,13 +126,12 @@ export const Home: FC = () => {
       {/* New Year Collection */}
       <section className="py-12 bg-wardity-bg dark:bg-wardity-bg-dark">
         <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between mb-8">
-            <div>
-              <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-gray-100">
-                New year New moments
-              </h2>
-              <p className="text-gray-600 dark:text-gray-400 mt-1">Celebrate with our festive collection</p>
-            </div>
+          <div className="flex items-end justify-between mb-8">
+            <SectionHeader
+              label="Featured Collection"
+              title="New Year, New Moments"
+              subtitle="Celebrate with our festive collection"
+            />
             <Link
               to="/collections/new-year"
               className="hidden md:flex items-center gap-1 text-primary font-medium hover:underline"
@@ -164,8 +162,8 @@ export const Home: FC = () => {
       {/* Best Sellers */}
       <section className="py-12 bg-white dark:bg-gray-900">
         <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between mb-8">
-            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-gray-100">Best Sellers</h2>
+          <div className="flex items-end justify-between mb-8">
+            <SectionHeader label="Most Loved" title="Best Sellers" />
             <Link
               to="/best-sellers"
               className="flex items-center gap-1 text-primary font-medium hover:underline"
@@ -186,9 +184,7 @@ export const Home: FC = () => {
       {/* Categories */}
       <section className="py-12 bg-wardity-bg dark:bg-wardity-bg-dark">
         <div className="container mx-auto px-4">
-          <div className="mb-8">
-            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-gray-100">Categories</h2>
-          </div>
+          <SectionHeader label="Browse" title="Categories" className="mb-8" />
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
             {categories.map((category) => (
@@ -201,9 +197,12 @@ export const Home: FC = () => {
       {/* Features / Benefits */}
       <section className="py-16 bg-white dark:bg-gray-900 overflow-hidden">
         <div className="container mx-auto px-4">
-          <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-gray-100 text-center mb-12">
-            Our Benefits
-          </h2>
+          <SectionHeader
+            label="Why Wardity"
+            title="Our Benefits"
+            align="center"
+            className="mb-12"
+          />
 
           <div className="grid md:grid-cols-2 gap-8 items-center">
             {/* Image */}
@@ -248,36 +247,134 @@ export const Home: FC = () => {
       </section>
 
       {/* Newsletter */}
-      <section className="py-16 bg-gradient-to-r from-primary to-primary-600">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="text-2xl md:text-3xl font-bold text-white mb-4">
-            Stay Connected with Wardity
-          </h2>
-          <p className="text-white/80 mb-8 max-w-md mx-auto">
-            Subscribe to our newsletter for exclusive offers, new arrivals, and flower care tips.
-          </p>
+      <section className="relative py-20 bg-charcoal overflow-hidden">
+        {/* Floral SVG background overlay */}
+        <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
+          <svg
+            className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[520px] h-[520px] opacity-[0.06]"
+            viewBox="0 0 400 400"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            {/* Radiating stems */}
+            {[0, 45, 90, 135, 180, 225, 270, 315].map((angle) => (
+              <line
+                key={`stem-${angle}`}
+                x1="200" y1="200"
+                x2="200" y2="18"
+                stroke="white"
+                strokeWidth="0.75"
+                transform={`rotate(${angle}, 200, 200)`}
+              />
+            ))}
+
+            {/* Small leaf buds at stem tips (cardinal only) */}
+            {[0, 90, 180, 270].map((angle) => (
+              <ellipse
+                key={`bud-${angle}`}
+                cx="200" cy="13"
+                rx="4" ry="7"
+                fill="white"
+                opacity="0.55"
+                transform={`rotate(${angle}, 200, 200)`}
+              />
+            ))}
+
+            {/* Outer petals — 8, wide teardrop */}
+            {[0, 45, 90, 135, 180, 225, 270, 315].map((angle) => (
+              <path
+                key={`outer-${angle}`}
+                d="M200 200 C187 166 187 138 200 122 C213 138 213 166 200 200Z"
+                fill="white"
+                transform={`rotate(${angle}, 200, 200)`}
+              />
+            ))}
+
+            {/* Inner petals — 8, narrower, offset 22.5° */}
+            {[22.5, 67.5, 112.5, 157.5, 202.5, 247.5, 292.5, 337.5].map((angle) => (
+              <path
+                key={`inner-${angle}`}
+                d="M200 200 C193 176 193 156 200 144 C207 156 207 176 200 200Z"
+                fill="white"
+                opacity="0.55"
+                transform={`rotate(${angle}, 200, 200)`}
+              />
+            ))}
+
+            {/* Centre disc */}
+            <circle cx="200" cy="200" r="17" fill="white" />
+            <circle cx="200" cy="200" r="7" fill="white" opacity="0.35" />
+          </svg>
+
+          {/* Corner accent blooms — small echoes at top-left and bottom-right */}
+          <svg
+            className="absolute -top-10 -left-10 w-48 h-48 opacity-[0.04]"
+            viewBox="0 0 200 200"
+            fill="none"
+          >
+            {[0, 60, 120, 180, 240, 300].map((angle) => (
+              <path
+                key={angle}
+                d="M100 100 C93 82 93 65 100 55 C107 65 107 82 100 100Z"
+                fill="white"
+                transform={`rotate(${angle}, 100, 100)`}
+              />
+            ))}
+            <circle cx="100" cy="100" r="10" fill="white" />
+          </svg>
+
+          <svg
+            className="absolute -bottom-10 -right-10 w-48 h-48 opacity-[0.04]"
+            viewBox="0 0 200 200"
+            fill="none"
+          >
+            {[0, 60, 120, 180, 240, 300].map((angle) => (
+              <path
+                key={angle}
+                d="M100 100 C93 82 93 65 100 55 C107 65 107 82 100 100Z"
+                fill="white"
+                transform={`rotate(${angle}, 100, 100)`}
+              />
+            ))}
+            <circle cx="100" cy="100" r="10" fill="white" />
+          </svg>
+        </div>
+
+        {/* Content */}
+        <div className="relative container mx-auto px-4 text-center">
+          <SectionHeader
+            label="Stay in the Loop"
+            title="Stay Connected with Wardity"
+            subtitle="Subscribe for exclusive offers, new arrivals, and flower care tips."
+            align="center"
+            inverted
+            className="mb-10 max-w-sm mx-auto"
+          />
+
           <form
             onSubmit={(e) => {
               e.preventDefault();
               const formData = new FormData(e.currentTarget);
               const email = formData.get("email") as string;
-              // In a real app, you'd call an API here
               console.log("Newsletter subscription:", email);
               alert("Thank you for subscribing!");
               e.currentTarget.reset();
             }}
-            className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto"
+            className="flex flex-col items-center gap-6 max-w-xs mx-auto"
           >
+            {/* Underline-only input */}
             <input
               type="email"
               name="email"
-              placeholder="Enter your email"
+              placeholder="Your email address"
               required
-              className="flex-1 px-6 py-3 rounded-full text-gray-900 focus:outline-none focus:ring-2 focus:ring-white/50"
+              className="w-full bg-transparent border-0 border-b border-white/30 text-white placeholder-white/35 pb-3 text-sm tracking-wide text-center focus:outline-none focus:border-white/65 transition-colors duration-200"
             />
+
+            {/* Thin outlined CTA */}
             <button
               type="submit"
-              className="px-8 py-3 bg-white text-primary font-semibold rounded-full hover:bg-gray-100 transition-colors"
+              className="border border-white/70 text-white text-xs tracking-[0.18em] uppercase px-10 py-3 hover:bg-white hover:text-charcoal transition-all duration-300"
             >
               Subscribe
             </button>
