@@ -31,8 +31,16 @@ export const Home: FC = () => {
   const [newYearThumb, setNewYearThumb] = useState({ w: 0, x: 0 });
   const [bestSellersThumb, setBestSellersThumb] = useState({ w: 0, x: 0 });
 
-  const { data: occasions } = useOccasions();
-  const { data: categories } = useCategories();
+  const {
+    data: occasions,
+    isLoading: occasionsLoading,
+    isError: occasionsError,
+  } = useOccasions();
+  const {
+    data: categories,
+    isLoading: categoriesLoading,
+    isError: categoriesError,
+  } = useCategories();
   const { data: newYearProducts, isLoading: newYearLoading } = useProducts({ pageSize: 8 });
   const { data: bestSellers, isLoading: bestSellersLoading } = useProducts({ badge: "Best Seller", pageSize: 6 });
 
@@ -64,7 +72,15 @@ export const Home: FC = () => {
             </Link>
           </div>
 
-          {occasions && occasions.length > 0 ? (
+          {occasionsLoading ? (
+            <div className="flex justify-center py-8">
+              <LoadingSpinner size="sm" />
+            </div>
+          ) : occasionsError ? (
+            <p className="text-center text-red-600 py-8 text-sm">
+              We couldn&apos;t load occasions. Please refresh or try again later.
+            </p>
+          ) : occasions && occasions.length > 0 ? (
             <>
               <div
                 ref={occasionsRef}
@@ -92,9 +108,9 @@ export const Home: FC = () => {
               </div>
             </>
           ) : (
-            <div className="flex justify-center py-8">
-              <LoadingSpinner size="sm" />
-            </div>
+            <p className="text-center text-gray-500 py-8 text-sm">
+              No occasions yet — add catalog data to see this section.
+            </p>
           )}
 
           <div className="mt-6 text-center md:hidden">
@@ -231,16 +247,24 @@ export const Home: FC = () => {
             className="mb-8"
           />
 
-          {categories && categories.length > 0 ? (
+          {categoriesLoading ? (
+            <div className="flex justify-center py-8">
+              <LoadingSpinner size="sm" />
+            </div>
+          ) : categoriesError ? (
+            <p className="text-center text-red-600 py-8 text-sm">
+              We couldn&apos;t load categories. Please refresh or try again later.
+            </p>
+          ) : categories && categories.length > 0 ? (
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-5">
               {categories.map((category) => (
                 <CategoryCard key={category.name} category={category} />
               ))}
             </div>
           ) : (
-            <div className="flex justify-center py-8">
-              <LoadingSpinner size="sm" />
-            </div>
+            <p className="text-center text-gray-500 py-8 text-sm">
+              No categories yet — add catalog data to see this section.
+            </p>
           )}
         </div>
       </section>
