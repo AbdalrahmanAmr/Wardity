@@ -23,6 +23,10 @@ export async function initializeDatabase(): Promise<void> {
     connectionLimit: 10,
     queueLimit: 0,
     charset: "utf8mb4",
+    // Enable SSL for cloud databases (Aiven, PlanetScale, etc.)
+    ...(process.env.DB_SSL === "true" && {
+      ssl: { rejectUnauthorized: false },
+    }),
   });
 
   // Verify connection
