@@ -2,8 +2,23 @@ import { Request, Response, NextFunction } from "express";
 import { ZodError } from "zod";
 
 export interface ApiError extends Error {
-  code?: number;
+  code?: number | string;
+  statusCode?: number;
+  status?: number;
   details?: Record<string, string[]>;
+}
+
+function resolveHttpStatus(err: ApiError): number {
+  if (typeof err.statusCode === "number" && err.statusCode >= 100 && err.statusCode < 600) {
+    return err.statusCode;
+  }
+  if (typeof err.status === "number" && err.status >= 100 && err.status < 600) {
+    return err.status;
+  }
+  if (typeof err.code === "number" && err.code >= 100 && err.code < 600) {
+    return err.code;
+  }
+  return 500;
 }
 
 export function errorHandler(
@@ -28,7 +43,7 @@ export function errorHandler(
     return;
   }
 
-  const code = err.code && err.code >= 100 && err.code < 600 ? err.code : 500;
+  const code = resolveHttpStatus(err);
   const message = err.message || "Internal server error";
 
   if (code >= 500) {
