@@ -9,6 +9,7 @@
     "build": "tsc",
     "start": "node dist/index.js",
     "seed": "tsx src/scripts/seed.ts",
+    "seed:catalog": "tsx src/scripts/seed.ts --catalog",
     "typecheck": "tsc --noEmit"
   },
   "keywords": [

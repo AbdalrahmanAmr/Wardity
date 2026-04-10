@@ -6,35 +6,73 @@ import dotenv from "dotenv";
 dotenv.config();
 
 /**
+ * SEED_MODE env or `--catalog` flag:
+ * - `full` (default) — wipe all app tables + demo user + catalog (local dev).
+ * - `catalog` — wipe only catalog/order/cart data, keep registered users. Then seed categories, occasions, products.
+ */
+const seedMode =
+  process.argv.includes("--catalog") || (process.env.SEED_MODE || "").toLowerCase() === "catalog"
+    ? "catalog"
+    : "full";
+
+/**
  * Seed database with initial data
  */
 async function seed(): Promise<void> {
   console.log("🌱 Starting database seed...");
+  console.log(`   Mode: ${seedMode}`);
 
   await initializeDatabase();
   const pool = getPool();
 
-  console.log("🧹 Clearing existing data...");
-  // Disable FK checks temporarily for clean truncation
-  await pool.execute("SET FOREIGN_KEY_CHECKS = 0");
-  const tables = [
-    "order_items", "orders", "cart_items", "wishlist_items",
-    "product_sizes", "product_gallery", "products",
-    "occasions", "categories", "users",
-    "contact_messages", "newsletter_subscribers",
-  ];
-  for (const table of tables) {
-    await pool.execute(`DELETE FROM ${table}`);
-  }
-  await pool.execute("SET FOREIGN_KEY_CHECKS = 1");
+  if (seedMode === "catalog") {
+    console.log("🧹 Clearing catalog & order data (users are kept)...");
+    await pool.execute("SET FOREIGN_KEY_CHECKS = 0");
+    const catalogTables = [
+      "order_items",
+      "orders",
+      "cart_items",
+      "wishlist_items",
+      "product_sizes",
+      "product_gallery",
+      "products",
+      "occasions",
+      "categories",
+    ];
+    for (const table of catalogTables) {
+      await pool.execute(`DELETE FROM ${table}`);
+    }
+    await pool.execute("SET FOREIGN_KEY_CHECKS = 1");
+  } else {
+    console.log("🧹 Clearing existing data (full reset)...");
+    await pool.execute("SET FOREIGN_KEY_CHECKS = 0");
+    const tables = [
+      "order_items",
+      "orders",
+      "cart_items",
+      "wishlist_items",
+      "product_sizes",
+      "product_gallery",
+      "products",
+      "occasions",
+      "categories",
+      "users",
+      "contact_messages",
+      "newsletter_subscribers",
+    ];
+    for (const table of tables) {
+      await pool.execute(`DELETE FROM ${table}`);
+    }
+    await pool.execute("SET FOREIGN_KEY_CHECKS = 1");
 
-  console.log("👤 Creating test user...");
-  const userId = generateId();
-  const passwordHash = await hashPassword("password123");
-  await pool.execute(
-    "INSERT INTO users (id, email, name, password_hash) VALUES (?, ?, ?, ?)",
-    [userId, "test@example.com", "Test User", passwordHash]
-  );
+    console.log("👤 Creating test user...");
+    const userId = generateId();
+    const passwordHash = await hashPassword("password123");
+    await pool.execute(
+      "INSERT INTO users (id, email, name, password_hash) VALUES (?, ?, ?, ?)",
+      [userId, "test@example.com", "Test User", passwordHash]
+    );
+  }
 
   console.log("📁 Creating categories...");
   const categories = [
@@ -192,9 +230,13 @@ async function seed(): Promise<void> {
   }
 
   console.log("✅ Database seeded successfully!");
-  console.log("\n📝 Test credentials:");
-  console.log("   Email: test@example.com");
-  console.log("   Password: password123");
+  if (seedMode !== "catalog") {
+    console.log("\n📝 Test credentials:");
+    console.log("   Email: test@example.com");
+    console.log("   Password: password123");
+  } else {
+    console.log("\n👤 Existing user accounts were not modified.");
+  }
   console.log("\n🚀 You can now start the server with: npm run dev");
 
   await pool.end();
