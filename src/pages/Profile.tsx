@@ -56,7 +56,7 @@ export const Profile: FC = () => {
     });
   };
 
-  const firstInitial = (user.name ?? "A").trim()[0].toUpperCase();
+  const firstInitial = (user.name ?? "A").trim()[0]?.toUpperCase() ?? "A";
 
   return (
     <div className="min-h-screen bg-cream py-16">

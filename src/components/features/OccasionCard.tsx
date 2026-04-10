@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, type ReactElement } from "react";
 import { Link } from "react-router-dom";
 import type { Occasion } from "@/types";
 
@@ -6,7 +6,7 @@ interface OccasionCardProps {
   occasion: Occasion;
 }
 
-const occasionIcons: Record<string, JSX.Element> = {
+const occasionIcons: Record<string, ReactElement> = {
   "3D_snowman_tree": (
     // Pine tree — triangle silhouette + trunk
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" xmlns="http://www.w3.org/2000/svg">

@@ -75,7 +75,7 @@ export const Header: FC = () => {
                 {/* Monogram circle */}
                 <div className="w-8 h-8 rounded-full border border-gold/40 bg-champagne flex items-center justify-center flex-shrink-0">
                   <span className="text-xs font-heading italic text-charcoal">
-                    {(user?.name ?? "A").split(" ")[0][0].toUpperCase()}
+                    {(user?.name ?? "A").split(" ")[0]?.[0]?.toUpperCase() ?? "A"}
                   </span>
                 </div>
                 <span className="hidden sm:block text-sm font-medium text-gray-700">

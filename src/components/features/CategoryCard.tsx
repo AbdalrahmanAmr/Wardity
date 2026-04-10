@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, type ReactElement } from "react";
 import { Link } from "react-router-dom";
 import type { Category } from "@/types";
 
@@ -6,8 +6,7 @@ interface CategoryCardProps {
   category: Category;
 }
 
-// Minimal stroke SVG icons — one per category type
-const categoryIcons: Record<string, JSX.Element> = {
+const categoryIcons: Record<string, ReactElement> = {
   illustration_bouquet: (
     <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" strokeWidth="1" xmlns="http://www.w3.org/2000/svg">
       {/* Three stems */}
