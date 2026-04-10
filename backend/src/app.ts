@@ -20,6 +20,9 @@ import { initializeDatabase } from "./database/init.js";
 
 const app = express();
 
+// Required behind Vercel's reverse proxy so express-rate-limit sees the real client IP
+app.set("trust proxy", 1);
+
 app.use(helmet());
 app.use(morgan("dev"));
 
