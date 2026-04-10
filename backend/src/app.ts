@@ -49,10 +49,14 @@ app.use(express.urlencoded({ extended: true }));
 // Lazy DB initialization for serverless environments (e.g. Vercel).
 // For traditional hosting, index.ts pre-initializes before server start so
 // this middleware resolves instantly on every request (pool already exists).
+// The promise is reset on failure so the next request retries initialization.
 let dbInitPromise: Promise<void> | null = null;
 app.use(async (_req, _res, next) => {
   if (!dbInitPromise) {
-    dbInitPromise = initializeDatabase();
+    dbInitPromise = initializeDatabase().catch((err) => {
+      dbInitPromise = null; // Reset so the next request retries
+      throw err;
+    });
   }
   try {
     await dbInitPromise;
