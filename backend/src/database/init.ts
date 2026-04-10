@@ -10,9 +10,12 @@ export function getPool(): Pool {
 }
 
 /**
- * Initialize MySQL connection pool and create schema
+ * Initialize MySQL connection pool and create schema.
+ * Safe to call multiple times — skips if already initialized.
  */
 export async function initializeDatabase(): Promise<void> {
+  if (pool) return;
+
   pool = mysql.createPool({
     host: process.env.DB_HOST || "localhost",
     port: parseInt(process.env.DB_PORT || "3306", 10),
