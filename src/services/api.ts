@@ -9,7 +9,13 @@ const BASE_URL = env.apiUrl;
  */
 function getAuthToken(): string | null {
   if (typeof window === "undefined") return null;
-  return localStorage.getItem(STORAGE_KEYS.TOKEN);
+  const raw = localStorage.getItem(STORAGE_KEYS.TOKEN);
+  if (!raw) return null;
+  try {
+    return JSON.parse(raw) as string;
+  } catch {
+    return raw;
+  }
 }
 
 /**

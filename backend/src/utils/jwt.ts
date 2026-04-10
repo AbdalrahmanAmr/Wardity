@@ -1,7 +1,12 @@
 import jwt from "jsonwebtoken";
 
-const secret = process.env.JWT_SECRET || "fallback-secret-change-in-production";
-const expiresIn = process.env.JWT_EXPIRES_IN || "7d";
+function getSecret(): string {
+  return process.env.JWT_SECRET || "fallback-secret-change-in-production";
+}
+
+function getExpiresIn(): string {
+  return process.env.JWT_EXPIRES_IN || "7d";
+}
 
 export interface TokenPayload {
   userId: string;
@@ -10,10 +15,10 @@ export interface TokenPayload {
 }
 
 export function generateToken(payload: TokenPayload): string {
-  return jwt.sign(payload, secret, { expiresIn });
+  return jwt.sign(payload, getSecret(), { expiresIn: getExpiresIn() });
 }
 
 export function verifyToken(token: string): TokenPayload {
-  return jwt.verify(token, secret) as TokenPayload;
+  return jwt.verify(token, getSecret()) as TokenPayload;
 }
 

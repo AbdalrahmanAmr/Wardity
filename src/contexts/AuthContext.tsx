@@ -47,26 +47,46 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Check if we have a token and verify it
-    const checkAuth = async () => {
+    let cancelled = false;
+
+    const checkAuth = async (): Promise<void> => {
       if (storedToken && storedUser) {
         try {
-          // Verify token by fetching user profile
           const response = await api.get<ApiResponse<User>>("/auth/me");
-          setUser(response.data);
-          setStoredUser(response.data);
+          if (!cancelled) {
+            setUser(response.data);
+            setStoredUser(response.data);
+          }
         } catch (error) {
-          // Token is invalid, clear storage
-          setStoredToken(null);
-          setStoredUser(null);
-          setUser(null);
+          if (cancelled) return;
+          // Only clear auth on a real rejection (401/403).
+          // Network errors keep the stored user for offline / UI testing.
+          const isAuthError =
+            typeof error === "object" &&
+            error !== null &&
+            "code" in error &&
+            ((error as { code: number }).code === 401 ||
+              (error as { code: number }).code === 403);
+
+          if (isAuthError) {
+            setStoredToken(null);
+            setStoredUser(null);
+            setUser(null);
+          } else {
+            setUser(storedUser);
+          }
         }
       }
-      setIsLoading(false);
+      if (!cancelled) setIsLoading(false);
     };
 
     checkAuth();
-  }, [storedToken, storedUser, setStoredToken, setStoredUser]);
+
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const login = useCallback(
     async (email: string, password: string) => {
