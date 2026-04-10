@@ -1,183 +1,176 @@
 # Wardity Backend API
 
-Backend API server for the Wardity e-commerce platform built with Node.js, Express, TypeScript, and SQLite.
+The backend server for the Wardity e-commerce platform. Built with Node.js, Express, TypeScript, and MySQL.
 
-## Features
-
-- 🔐 JWT-based authentication
-- 🛍️ Product management with categories and occasions
-- 🛒 Shopping cart functionality
-- ❤️ Wishlist management
-- 📦 Order processing
-- 🔍 Product search and filtering
-- 📄 Pagination support
-- ✅ Input validation with Zod
-- 🛡️ Error handling middleware
+> This is the "kitchen" of the restaurant -- it handles all the behind-the-scenes work like storing data, checking passwords, processing orders, and sending emails.
 
 ## Tech Stack
 
-- **Runtime**: Node.js
-- **Framework**: Express.js
-- **Language**: TypeScript
-- **Database**: SQLite (with better-sqlite3)
-- **Authentication**: JWT (jsonwebtoken)
-- **Validation**: Zod
-- **Password Hashing**: bcryptjs
+| Technology | What It Does |
+|-----------|-------------|
+| **Node.js** | Runs JavaScript on the server (the engine) |
+| **Express.js** | Handles HTTP requests and routing (the waiter) |
+| **TypeScript** | Adds type safety to JavaScript (the spell-checker) |
+| **MySQL** | Relational database for storing all data (the filing cabinet) |
+| **JWT** | Creates login tokens for authentication (the wristband) |
+| **bcryptjs** | Hashes passwords securely (the scrambler) |
+| **Zod** | Validates input data (the security guard) |
+| **Nodemailer** | Sends emails for order notifications (the mailman) |
+| **Helmet** | Adds security headers (the helmet) |
+| **express-rate-limit** | Prevents request spam (the speed limiter) |
+| **Morgan** | Logs HTTP requests for debugging (the logbook) |
 
-## Getting Started
+## Quick Start
 
 ### Prerequisites
 
-- Node.js 18+ and npm
+- Node.js 18+ (https://nodejs.org)
+- MySQL running (via XAMPP: https://www.apachefriends.org)
 
-### Installation
+### Setup
 
-1. Install dependencies:
 ```bash
+# 1. Install dependencies
 npm install
-```
 
-2. Copy environment file:
-```bash
-cp .env.example .env
-```
+# 2. Create the MySQL database
+mysql -u root -p -e "CREATE DATABASE wardity CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
 
-3. Update `.env` with your configuration (optional):
-```env
-PORT=3001
-JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
-DATABASE_PATH=./data/wardity.db
-CORS_ORIGIN=http://localhost:5173
-```
+# 3. Copy environment file and fill in your values
+copy .env.example .env
 
-4. Seed the database with initial data:
-```bash
+# 4. Seed the database with sample data
 npm run seed
-```
 
-5. Start the development server:
-```bash
+# 5. Start the development server
 npm run dev
 ```
 
-The server will start on `http://localhost:3001`
+The server starts at `http://localhost:3001`.
+
+### Verify It Works
+
+```bash
+curl http://localhost:3001/health
+# Should return: {"status":"ok","timestamp":"..."}
+```
+
+## Environment Variables
+
+See `.env.example` for the full list. Key variables:
+
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `PORT` | No (default: 3001) | Server port |
+| `NODE_ENV` | No (default: development) | Environment mode |
+| `DB_HOST` | Yes | MySQL host |
+| `DB_PORT` | Yes | MySQL port (default: 3306) |
+| `DB_USER` | Yes | MySQL username |
+| `DB_PASSWORD` | Yes | MySQL password |
+| `DB_NAME` | Yes | MySQL database name |
+| `JWT_SECRET` | Yes | Secret key for login tokens |
+| `JWT_EXPIRES_IN` | No (default: 7d) | Token expiry time |
+| `CORS_ORIGIN` | Yes | Allowed frontend URL |
+| `SMTP_HOST` | No | Email server host |
+| `SMTP_PORT` | No | Email server port |
+| `SMTP_USER` | No | Email account |
+| `SMTP_PASS` | No | Email app password |
+| `SMTP_FROM` | No | Sender email address |
+| `OWNER_EMAIL` | No | Shop owner's email for notifications |
+| `WHATSAPP_PHONE` | No | WhatsApp number for order links |
 
 ## API Endpoints
 
-### Authentication
+See the full [API Reference](../docs/API_REFERENCE.md) for detailed request/response examples.
 
-- `POST /api/auth/register` - Register new user
-- `POST /api/auth/login` - Login user
-- `GET /api/auth/me` - Get current user (requires auth)
-- `PATCH /api/auth/profile` - Update user profile (requires auth)
+### Public (No Login Required)
 
-### Products
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/health` | Health check |
+| GET | `/api/products` | List products (with filtering/pagination) |
+| GET | `/api/products/search?q=` | Search products |
+| GET | `/api/products/:id` | Get one product |
+| GET | `/api/categories` | List categories |
+| GET | `/api/categories/:slug` | Get category with products |
+| GET | `/api/occasions` | List occasions |
+| GET | `/api/occasions/:slug` | Get occasion with products |
+| POST | `/api/auth/register` | Create account |
+| POST | `/api/auth/login` | Log in |
+| POST | `/api/contact` | Send contact message |
+| POST | `/api/newsletter/subscribe` | Subscribe to newsletter |
 
-- `GET /api/products` - Get all products (supports pagination, filtering)
-- `GET /api/products/search?q=query` - Search products
-- `GET /api/products/:id` - Get product by ID
+### Authenticated (Login Required)
 
-### Categories
+Include `Authorization: Bearer <token>` header.
 
-- `GET /api/categories` - Get all categories
-- `GET /api/categories/:slug` - Get category by slug
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/auth/me` | Get my profile |
+| PATCH | `/api/auth/profile` | Update my profile |
+| PATCH | `/api/auth/password` | Change my password |
+| GET | `/api/cart` | Get my cart |
+| POST | `/api/cart/items` | Add to cart |
+| PATCH | `/api/cart/items/:id` | Update cart item |
+| DELETE | `/api/cart/items/:id` | Remove from cart |
+| DELETE | `/api/cart` | Clear cart |
+| GET | `/api/wishlist` | Get my wishlist |
+| GET | `/api/wishlist/check/:productId` | Check if in wishlist |
+| POST | `/api/wishlist/items` | Add to wishlist |
+| DELETE | `/api/wishlist/items/:productId` | Remove from wishlist |
+| GET | `/api/orders` | Get my orders |
+| GET | `/api/orders/:id` | Get order details |
+| GET | `/api/orders/:id/receipt` | Get order receipt |
+| POST | `/api/orders` | Place order |
+| PATCH | `/api/orders/:id` | Cancel order |
 
-### Occasions
+## Database
 
-- `GET /api/occasions` - Get all occasions
-- `GET /api/occasions/:slug` - Get occasion by slug
+Uses **MySQL** with 12 tables. Tables are auto-created on first server start via `src/database/init.ts`.
 
-### Cart (Requires Authentication)
+See the full [Database Guide](../docs/DATABASE_GUIDE.md) for table details.
 
-- `GET /api/cart` - Get user's cart
-- `POST /api/cart/items` - Add item to cart
-- `PATCH /api/cart/items/:id` - Update cart item quantity
-- `DELETE /api/cart/items/:id` - Remove item from cart
-- `DELETE /api/cart` - Clear entire cart
+| Table | Purpose |
+|-------|---------|
+| `users` | User accounts |
+| `categories` | Product categories |
+| `occasions` | Special occasions |
+| `products` | Product catalog |
+| `product_gallery` | Product images |
+| `product_sizes` | Size variants with prices |
+| `cart_items` | Shopping cart |
+| `wishlist_items` | Saved favorites |
+| `orders` | Placed orders |
+| `order_items` | Items in each order |
+| `contact_messages` | Contact form submissions |
+| `newsletter_subscribers` | Email subscribers |
 
-### Wishlist (Requires Authentication)
+## Scripts
 
-- `GET /api/wishlist` - Get user's wishlist
-- `GET /api/wishlist/check/:productId` - Check if product is in wishlist
-- `POST /api/wishlist/items` - Add product to wishlist
-- `DELETE /api/wishlist/items/:productId` - Remove product from wishlist
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Start dev server with auto-reload |
+| `npm run build` | Compile TypeScript to JavaScript |
+| `npm start` | Start production server |
+| `npm run seed` | Seed database with sample data |
+| `npm run typecheck` | Type-check without building |
 
-### Orders (Requires Authentication)
-
-- `GET /api/orders` - Get user's orders
-- `GET /api/orders/:id` - Get order by ID
-- `POST /api/orders` - Create new order from cart
-
-## Authentication
-
-Most endpoints require authentication. Include the JWT token in the Authorization header:
-
-```
-Authorization: Bearer <your-jwt-token>
-```
-
-## Database Schema
-
-The database includes the following tables:
-- `users` - User accounts
-- `products` - Product catalog
-- `categories` - Product categories
-- `occasions` - Special occasions
-- `cart_items` - Shopping cart items
-- `wishlist_items` - User wishlists
-- `orders` - Customer orders
-- `order_items` - Order line items
-- `product_gallery` - Product images
-- `product_sizes` - Product size variants
-
-## Development
-
-### Scripts
-
-- `npm run dev` - Start development server with hot reload
-- `npm run build` - Build for production
-- `npm run start` - Start production server
-- `npm run seed` - Seed database with initial data
-- `npm run typecheck` - Type check without building
-
-### Project Structure
+## Project Structure
 
 ```
 backend/
-├── src/
-│   ├── database/       # Database initialization
-│   ├── middleware/     # Express middleware
-│   ├── routes/         # API route handlers
-│   ├── scripts/        # Utility scripts (seed, etc.)
-│   ├── utils/          # Helper functions
-│   └── index.ts        # Application entry point
-├── data/               # SQLite database files (gitignored)
-├── dist/               # Compiled JavaScript (gitignored)
-└── package.json
+|-- src/
+|   |-- database/init.ts     -- MySQL connection + table creation
+|   |-- middleware/           -- Auth, error handling
+|   |-- routes/              -- API route handlers
+|   |-- scripts/seed.ts      -- Database seeder
+|   |-- utils/               -- JWT, password, validation, email, shipping
+|   |-- index.ts             -- Entry point
+|-- .env.example             -- Environment variable template
+|-- package.json             -- Dependencies and scripts
+|-- tsconfig.json            -- TypeScript config
 ```
-
-## Production Deployment
-
-1. Build the project:
-```bash
-npm run build
-```
-
-2. Set environment variables in production
-
-3. Start the server:
-```bash
-npm start
-```
-
-## Notes
-
-- The database file is stored in `data/wardity.db` by default
-- SQLite is used for simplicity, but the structure allows easy migration to PostgreSQL
-- JWT tokens expire after 7 days by default (configurable via `JWT_EXPIRES_IN`)
-- CORS is configured to allow requests from the frontend origin
 
 ## License
 
-ISC
-
+MIT

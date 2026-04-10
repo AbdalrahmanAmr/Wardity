@@ -1,61 +1,39 @@
 import { Router, Response } from "express";
-import { db } from "../database/init.js";
+import { getPool, type RowDataPacket, type QueryParams } from "../database/init.js";
 import { authenticateToken, AuthRequest } from "../middleware/auth.js";
 import { validate, addToCartSchema, updateCartItemSchema } from "../utils/validation.js";
 import { generateId } from "../utils/id.js";
 
 export const cartRouter = Router();
 
-// All cart routes require authentication
 cartRouter.use(authenticateToken);
 
-/**
- * GET /api/cart
- * Get current user's cart
- */
-cartRouter.get("/", (req: AuthRequest, res: Response) => {
-  const cartItems = db
-    .prepare(
-      `
-      SELECT 
-        ci.id,
-        ci.quantity,
-        ci.selected_size as selectedSize,
-        p.id as product_id,
-        p.name,
-        p.price,
-        p.badge,
-        p.image,
-        p.image_desc as imageDesc,
-        p.brand_logo as brandLogo,
-        p.status,
-        p.sku
-      FROM cart_items ci
-      JOIN products p ON ci.product_id = p.id
-      WHERE ci.user_id = ?
-      ORDER BY ci.created_at DESC
-    `
-    )
-    .all(req.userId!) as Array<{
-    id: string;
-    quantity: number;
-    selectedSize: string | null;
-    product_id: string;
-    name: string;
-    price: number;
-    badge: string | null;
-    image: string;
-    imageDesc: string | null;
-    brandLogo: string | null;
-    status: string;
-    sku: string | null;
-  }>;
+const CART_QUERY = `
+  SELECT 
+    ci.id,
+    ci.quantity,
+    ci.selected_size as selectedSize,
+    p.id as product_id,
+    p.name,
+    p.price,
+    p.badge,
+    p.image,
+    p.image_desc as imageDesc,
+    p.brand_logo as brandLogo,
+    p.status,
+    p.sku
+  FROM cart_items ci
+  JOIN products p ON ci.product_id = p.id
+  WHERE ci.user_id = ?
+  ORDER BY ci.created_at DESC
+`;
 
-  const items = cartItems.map((item) => ({
+function formatCartItems(rows: RowDataPacket[]) {
+  return rows.map((item) => ({
     product: {
       id: item.product_id,
       name: item.name,
-      price: item.price,
+      price: Number(item.price),
       badge: item.badge,
       image: item.image,
       imageDesc: item.imageDesc,
@@ -66,242 +44,141 @@ cartRouter.get("/", (req: AuthRequest, res: Response) => {
     quantity: item.quantity,
     selectedSize: item.selectedSize || undefined,
   }));
+}
 
-  const total = items.reduce(
-    (sum, item) => sum + item.product.price * item.quantity,
-    0
-  );
+/**
+ * GET /api/cart
+ */
+cartRouter.get("/", async (req: AuthRequest, res: Response) => {
+  const pool = getPool();
+  const uid = req.userId!;
+  const [rows] = await pool.query<RowDataPacket[]>(CART_QUERY, [uid] as QueryParams);
+
+  const items = formatCartItems(rows);
+  const total = items.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
   const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
 
-  res.json({
-    items,
-    total,
-    itemCount,
-  });
+  res.json({ items, total, itemCount });
 });
 
 /**
  * POST /api/cart/items
- * Add item to cart
  */
-cartRouter.post("/items", (req: AuthRequest, res: Response) => {
-  const { productId, quantity, selectedSize } = validate(
-    addToCartSchema,
-    req.body
+cartRouter.post("/items", async (req: AuthRequest, res: Response) => {
+  const pool = getPool();
+  const { productId, quantity, selectedSize } = validate(addToCartSchema, req.body);
+
+  const uid = req.userId!;
+  const [products] = await pool.query<RowDataPacket[]>(
+    "SELECT id, status FROM products WHERE id = ?", [productId] as QueryParams
   );
 
-  // Check if product exists
-  const product = db
-    .prepare("SELECT * FROM products WHERE id = ?")
-    .get(productId) as { id: string } | undefined;
-
-  if (!product) {
-    res.status(404).json({
-      message: "Product not found",
-      status: 404,
-    });
+  if (products.length === 0) {
+    res.status(404).json({ message: "Product not found", status: 404 });
     return;
   }
 
-  // Check if item already exists in cart
-  const existingItem = db
-    .prepare(
-      "SELECT id, quantity FROM cart_items WHERE user_id = ? AND product_id = ? AND (selected_size = ? OR (selected_size IS NULL AND ? IS NULL))"
-    )
-    .get(req.userId!, productId, selectedSize || null, selectedSize || null) as
-    | { id: string; quantity: number }
-    | undefined;
-
-  if (existingItem) {
-    // Update quantity
-    const newQuantity = existingItem.quantity + quantity;
-    db.prepare("UPDATE cart_items SET quantity = ?, updated_at = datetime('now') WHERE id = ?").run(
-      newQuantity,
-      existingItem.id
-    );
-  } else {
-    // Create new cart item
-    const itemId = generateId();
-    db.prepare(
-      "INSERT INTO cart_items (id, user_id, product_id, quantity, selected_size) VALUES (?, ?, ?, ?, ?)"
-    ).run(itemId, req.userId!, productId, quantity, selectedSize || null);
+  if (products[0].status !== "In stock") {
+    res.status(400).json({ message: "Product is out of stock", status: 400 });
+    return;
   }
 
-  // Return updated cart
-  const cartItems = db
-    .prepare(
-      `
-      SELECT 
-        ci.id,
-        ci.quantity,
-        ci.selected_size as selectedSize,
-        p.id as product_id,
-        p.name,
-        p.price,
-        p.badge,
-        p.image,
-        p.image_desc as imageDesc,
-        p.brand_logo as brandLogo,
-        p.status,
-        p.sku
-      FROM cart_items ci
-      JOIN products p ON ci.product_id = p.id
-      WHERE ci.user_id = ?
-      ORDER BY ci.created_at DESC
-    `
-    )
-    .all(req.userId!) as Array<{
-    id: string;
-    quantity: number;
-    selectedSize: string | null;
-    product_id: string;
-    name: string;
-    price: number;
-    badge: string | null;
-    image: string;
-    imageDesc: string | null;
-    brandLogo: string | null;
-    status: string;
-    sku: string | null;
-  }>;
-
-  const items = cartItems.map((item) => ({
-    product: {
-      id: item.product_id,
-      name: item.name,
-      price: item.price,
-      badge: item.badge,
-      image: item.image,
-      imageDesc: item.imageDesc,
-      brandLogo: item.brandLogo,
-      status: item.status as "In stock" | "Out of stock",
-      sku: item.sku,
-    },
-    quantity: item.quantity,
-    selectedSize: item.selectedSize || undefined,
-  }));
-
-  const newItem = items.find(
-    (item) =>
-      item.product.id === productId &&
-      item.selectedSize === selectedSize
+  const sizeVal = selectedSize || null;
+  const [existing] = await pool.query<RowDataPacket[]>(
+    "SELECT id, quantity FROM cart_items WHERE user_id = ? AND product_id = ? AND (selected_size = ? OR (selected_size IS NULL AND ? IS NULL))",
+    [uid, productId, sizeVal, sizeVal] as QueryParams
   );
+
+  if (existing.length > 0) {
+    const newQty = existing[0].quantity + quantity;
+    await pool.query("UPDATE cart_items SET quantity = ? WHERE id = ?", [newQty, existing[0].id] as QueryParams);
+  } else {
+    const itemId = generateId();
+    await pool.query(
+      "INSERT INTO cart_items (id, user_id, product_id, quantity, selected_size) VALUES (?, ?, ?, ?, ?)",
+      [itemId, uid, productId, quantity, sizeVal] as QueryParams
+    );
+  }
+
+  const [rows] = await pool.query<RowDataPacket[]>(CART_QUERY, [uid] as QueryParams);
+  const items = formatCartItems(rows);
+  const newItem = items.find((item) => item.product.id === productId && item.selectedSize === selectedSize);
 
   res.status(201).json(newItem);
 });
 
 /**
  * PATCH /api/cart/items/:id
- * Update cart item quantity
  */
-cartRouter.patch("/items/:id", (req: AuthRequest, res: Response) => {
+cartRouter.patch("/items/:id", async (req: AuthRequest, res: Response) => {
+  const pool = getPool();
   const { id } = req.params;
   const { quantity } = validate(updateCartItemSchema, req.body);
 
-  // Check if item exists and belongs to user
-  const item = db
-    .prepare("SELECT * FROM cart_items WHERE id = ? AND user_id = ?")
-    .get(id, req.userId!) as { id: string } | undefined;
+  const [items] = await pool.query<RowDataPacket[]>(
+    "SELECT id FROM cart_items WHERE id = ? AND user_id = ?", [id, req.userId!] as QueryParams
+  );
 
-  if (!item) {
-    res.status(404).json({
-      message: "Cart item not found",
-      status: 404,
-    });
+  if (items.length === 0) {
+    res.status(404).json({ message: "Cart item not found", status: 404 });
     return;
   }
 
-  // Update quantity
-  db.prepare(
-    "UPDATE cart_items SET quantity = ?, updated_at = datetime('now') WHERE id = ?"
-  ).run(quantity, id);
+  await pool.query("UPDATE cart_items SET quantity = ? WHERE id = ?", [quantity, id] as QueryParams);
 
-  // Return updated item
-  const updatedItem = db
-    .prepare(
-      `
-      SELECT 
-        ci.id,
-        ci.quantity,
-        ci.selected_size as selectedSize,
-        p.id as product_id,
-        p.name,
-        p.price,
-        p.badge,
-        p.image,
-        p.image_desc as imageDesc,
-        p.brand_logo as brandLogo,
-        p.status,
-        p.sku
-      FROM cart_items ci
-      JOIN products p ON ci.product_id = p.id
-      WHERE ci.id = ?
-    `
-    )
-    .get(id) as {
-    id: string;
-    quantity: number;
-    selectedSize: string | null;
-    product_id: string;
-    name: string;
-    price: number;
-    badge: string | null;
-    image: string;
-    imageDesc: string | null;
-    brandLogo: string | null;
-    status: string;
-    sku: string | null;
-  };
+  const [rows] = await pool.query<RowDataPacket[]>(
+    `SELECT 
+      ci.id, ci.quantity, ci.selected_size as selectedSize,
+      p.id as product_id, p.name, p.price, p.badge, p.image,
+      p.image_desc as imageDesc, p.brand_logo as brandLogo, p.status, p.sku
+    FROM cart_items ci JOIN products p ON ci.product_id = p.id
+    WHERE ci.id = ?`,
+    [id] as QueryParams
+  );
+  const item = rows[0];
 
   res.json({
     product: {
-      id: updatedItem.product_id,
-      name: updatedItem.name,
-      price: updatedItem.price,
-      badge: updatedItem.badge,
-      image: updatedItem.image,
-      imageDesc: updatedItem.imageDesc,
-      brandLogo: updatedItem.brandLogo,
-      status: updatedItem.status as "In stock" | "Out of stock",
-      sku: updatedItem.sku,
+      id: item.product_id,
+      name: item.name,
+      price: Number(item.price),
+      badge: item.badge,
+      image: item.image,
+      imageDesc: item.imageDesc,
+      brandLogo: item.brandLogo,
+      status: item.status as "In stock" | "Out of stock",
+      sku: item.sku,
     },
-    quantity: updatedItem.quantity,
-    selectedSize: updatedItem.selectedSize || undefined,
+    quantity: item.quantity,
+    selectedSize: item.selectedSize || undefined,
   });
 });
 
 /**
  * DELETE /api/cart/items/:id
- * Remove item from cart
  */
-cartRouter.delete("/items/:id", (req: AuthRequest, res: Response) => {
+cartRouter.delete("/items/:id", async (req: AuthRequest, res: Response) => {
+  const pool = getPool();
   const { id } = req.params;
 
-  // Check if item exists and belongs to user
-  const item = db
-    .prepare("SELECT * FROM cart_items WHERE id = ? AND user_id = ?")
-    .get(id, req.userId!) as { id: string } | undefined;
+  const [items] = await pool.query<RowDataPacket[]>(
+    "SELECT id FROM cart_items WHERE id = ? AND user_id = ?", [id, req.userId!] as QueryParams
+  );
 
-  if (!item) {
-    res.status(404).json({
-      message: "Cart item not found",
-      status: 404,
-    });
+  if (items.length === 0) {
+    res.status(404).json({ message: "Cart item not found", status: 404 });
     return;
   }
 
-  db.prepare("DELETE FROM cart_items WHERE id = ?").run(id);
-
+  await pool.query("DELETE FROM cart_items WHERE id = ?", [id] as QueryParams);
   res.status(204).send();
 });
 
 /**
  * DELETE /api/cart
- * Clear entire cart
  */
-cartRouter.delete("/", (req: AuthRequest, res: Response) => {
-  db.prepare("DELETE FROM cart_items WHERE user_id = ?").run(req.userId!);
-
+cartRouter.delete("/", async (req: AuthRequest, res: Response) => {
+  const pool = getPool();
+  await pool.query("DELETE FROM cart_items WHERE user_id = ?", [req.userId!] as QueryParams);
   res.status(204).send();
 });
-

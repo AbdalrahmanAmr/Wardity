@@ -46,3 +46,8 @@ coverage
 .cache
 .turbo
 
+# Markdown docs (keep only READMEs and docs/ folder)
+*.md
+!README.md
+!docs/*.md
+

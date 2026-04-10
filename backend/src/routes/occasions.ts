@@ -1,50 +1,36 @@
 import { Router, Response } from "express";
-import { db } from "../database/init.js";
+import { getPool, type RowDataPacket, type QueryParams } from "../database/init.js";
 
 export const occasionsRouter = Router();
 
 /**
  * GET /api/occasions
- * Get all occasions
  */
-occasionsRouter.get("/", (_req, res: Response) => {
-  const occasions = db
-    .prepare("SELECT name, image_type as imageType FROM occasions ORDER BY name")
-    .all() as Array<{
-    name: string;
-    imageType: string;
-  }>;
+occasionsRouter.get("/", async (_req, res: Response) => {
+  const pool = getPool();
+  const [occasions] = await pool.query<RowDataPacket[]>(
+    "SELECT name, slug, image_type as imageType FROM occasions ORDER BY name"
+  );
 
-  res.json(occasions);
+  res.json(occasions.map((o) => ({ name: o.name, slug: o.slug, imageType: o.imageType })));
 });
 
 /**
  * GET /api/occasions/:slug
- * Get occasion by slug
  */
-occasionsRouter.get("/:slug", (req, res: Response) => {
+occasionsRouter.get("/:slug", async (req, res: Response) => {
+  const pool = getPool();
   const { slug } = req.params;
 
-  const occasion = db
-    .prepare("SELECT name, image_type as imageType FROM occasions WHERE slug = ?")
-    .get(slug) as
-    | {
-        name: string;
-        imageType: string;
-      }
-    | undefined;
+  const [rows] = await pool.query<RowDataPacket[]>(
+    "SELECT name, slug, image_type as imageType FROM occasions WHERE slug = ?",
+    [slug] as QueryParams
+  );
 
-  if (!occasion) {
-    res.status(404).json({
-      message: "Occasion not found",
-      status: 404,
-    });
+  if (rows.length === 0) {
+    res.status(404).json({ message: "Occasion not found", status: 404 });
     return;
   }
 
-  res.json({
-    name: occasion.name,
-    imageType: occasion.imageType,
-  });
+  res.json({ name: rows[0].name, slug: rows[0].slug, imageType: rows[0].imageType });
 });
-

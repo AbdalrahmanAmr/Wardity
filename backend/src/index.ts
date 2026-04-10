@@ -1,7 +1,10 @@
 import express from "express";
 import cors from "cors";
-import dotenv from "dotenv";
+import helmet from "helmet";
+import morgan from "morgan";
+import rateLimit from "express-rate-limit";
 import "express-async-errors";
+import { config } from "./config/index.js";
 import { errorHandler } from "./middleware/errorHandler.js";
 import { notFoundHandler } from "./middleware/notFoundHandler.js";
 import { authRouter } from "./routes/auth.js";
@@ -11,30 +14,46 @@ import { occasionsRouter } from "./routes/occasions.js";
 import { cartRouter } from "./routes/cart.js";
 import { wishlistRouter } from "./routes/wishlist.js";
 import { ordersRouter } from "./routes/orders.js";
+import { contactRouter } from "./routes/contact.js";
+import { newsletterRouter } from "./routes/newsletter.js";
 import { initializeDatabase } from "./database/init.js";
 
-dotenv.config();
-
 const app = express();
-const PORT = process.env.PORT || 3001;
 
-// Initialize database
-initializeDatabase();
+app.use(helmet());
+app.use(morgan("dev"));
 
-// Middleware
-app.use(cors({
-  origin: process.env.CORS_ORIGIN || "http://localhost:5173",
-  credentials: true,
-}));
-app.use(express.json());
+const apiLimiter = rateLimit({
+  windowMs: config.rateLimit.api.windowMs,
+  max: config.rateLimit.api.max,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { message: "Too many requests, please try again later.", status: 429 },
+});
+
+const authLimiter = rateLimit({
+  windowMs: config.rateLimit.auth.windowMs,
+  max: config.rateLimit.auth.max,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { message: "Too many login attempts, please try again later.", status: 429 },
+});
+
+if (!process.env.CORS_ORIGIN && config.isProduction) {
+  console.warn("CORS_ORIGIN not set — defaulting to localhost. Set CORS_ORIGIN for production.");
+}
+app.use(cors({ origin: config.corsOrigin, credentials: true }));
+app.use(express.json({ limit: "1mb" }));
 app.use(express.urlencoded({ extended: true }));
 
-// Health check
 app.get("/health", (_req, res) => {
   res.json({ status: "ok", timestamp: new Date().toISOString() });
 });
 
-// API Routes
+app.use("/api/auth/login", authLimiter);
+app.use("/api/auth/register", authLimiter);
+app.use("/api", apiLimiter);
+
 app.use("/api/auth", authRouter);
 app.use("/api/products", productsRouter);
 app.use("/api/categories", categoriesRouter);
@@ -42,13 +61,20 @@ app.use("/api/occasions", occasionsRouter);
 app.use("/api/cart", cartRouter);
 app.use("/api/wishlist", wishlistRouter);
 app.use("/api/orders", ordersRouter);
+app.use("/api/contact", contactRouter);
+app.use("/api/newsletter", newsletterRouter);
 
-// Error handling
 app.use(notFoundHandler);
 app.use(errorHandler);
 
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
-  console.log(`📊 Health check: http://localhost:${PORT}/health`);
-});
-
+initializeDatabase()
+  .then(() => {
+    app.listen(config.port, () => {
+      console.log(`Server running on http://localhost:${config.port}`);
+      console.log(`Health check: http://localhost:${config.port}/health`);
+    });
+  })
+  .catch((err) => {
+    console.error("Failed to initialize database:", err);
+    process.exit(1);
+  });

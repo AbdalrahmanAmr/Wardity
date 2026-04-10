@@ -1,21 +1,11 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { QueryClientProvider } from "@tanstack/react-query";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { RouterProvider } from "react-router-dom";
-import { ErrorBoundary } from "@/components/ui";
-import {
-  CartProvider,
-  AuthProvider,
-  WishlistProvider,
-  LanguageProvider,
-  DeliveryLocationProvider,
-} from "@/contexts";
-import { queryClient } from "./services/queryClient";
-import { router } from "./router";
+import { ErrorBoundary } from "@/shared/components";
+import { AppProviders } from "@/app/providers/AppProviders";
+import { router } from "@/app/router";
 import "./index.css";
 
-// Initialize dark mode before React renders to prevent flash
 const theme = localStorage.getItem("wardity-theme") || "light";
 if (theme === "dark") {
   document.documentElement.classList.add("dark");
@@ -31,20 +21,9 @@ if (!rootElement) {
 createRoot(rootElement).render(
   <StrictMode>
     <ErrorBoundary>
-      <QueryClientProvider client={queryClient}>
-        <LanguageProvider>
-          <DeliveryLocationProvider>
-            <AuthProvider>
-              <CartProvider>
-                <WishlistProvider>
-                  <RouterProvider router={router} />
-                  <ReactQueryDevtools initialIsOpen={false} />
-                </WishlistProvider>
-              </CartProvider>
-            </AuthProvider>
-          </DeliveryLocationProvider>
-        </LanguageProvider>
-      </QueryClientProvider>
+      <AppProviders>
+        <RouterProvider router={router} />
+      </AppProviders>
     </ErrorBoundary>
   </StrictMode>
 );

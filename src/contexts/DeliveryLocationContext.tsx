@@ -1,5 +1,5 @@
 import { createContext, useContext, useCallback, ReactNode } from "react";
-import { useLocalStorage } from "@/hooks/useLocalStorage";
+import { useLocalStorage } from "@/shared/hooks/useLocalStorage";
 
 interface DeliveryLocation {
   id: string;

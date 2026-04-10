@@ -1,788 +1,312 @@
-# 🛍️ Wardity
+# Wardity - Online Flower & Gift Shop
 
-> A modern, full-stack e-commerce platform built with React 19, TypeScript, and Express. Featuring product browsing, shopping cart, wishlist, order management, and more.
+## What Is Wardity?
 
-[![React](https://img.shields.io/badge/React-19.2.0-61DAFB?logo=react)](https://react.dev)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.9.3-3178C6?logo=typescript)](https://www.typescriptlang.org)
-[![Vite](https://img.shields.io/badge/Vite-7.1.12-646CFF?logo=vite)](https://vitejs.dev)
-[![TanStack Query](https://img.shields.io/badge/TanStack%20Query-5.90.6-FF4154?logo=reactquery)](https://tanstack.com/query)
+Imagine you want to send your mom a beautiful bouquet of roses for her birthday, but you're too busy to go to a flower shop. Wardity is a **website** where you can pick flowers, cakes, chocolates, and gifts from your phone or computer, and someone will deliver them for you!
 
----
+It's like an online toy store, but instead of toys, it sells beautiful things for special moments.
 
-## 📋 Table of Contents
+## What Can You Do on This Website?
 
-- [Features](#-features)
-- [Tech Stack](#-tech-stack)
-- [Project Structure](#-project-structure)
-- [Getting Started](#-getting-started)
-- [Development](#-development)
-- [API Documentation](#-api-documentation)
-- [Code Standards](#-code-standards)
-- [Testing](#-testing)
-- [Deployment](#-deployment)
-- [Contributing](#-contributing)
-- [Troubleshooting](#-troubleshooting)
-- [License](#-license)
+| Feature | What It Means (Simple Version) |
+|---------|-------------------------------|
+| **Browse Products** | Look at all the flowers, cakes, chocolates, and gifts -- like window shopping! |
+| **Search** | Type "roses" and find all the rose bouquets instantly |
+| **Filter by Category** | Only want to see cakes? Click "Cakes" and everything else disappears |
+| **Filter by Occasion** | Shopping for a birthday? Click "Birthday" and see only birthday-appropriate gifts |
+| **Shopping Cart** | Like a real shopping cart -- put things in, take them out, change how many you want |
+| **Wishlist** | See something you like but not ready to buy? Save it for later (like bookmarking a page) |
+| **Place Orders** | Fill in your name and address, pick how you want to pay, and order! |
+| **Receipt Numbers** | Every order gets a special number like `WRD-000001` so you can track it |
+| **Email Notifications** | After ordering, both you AND the shop owner get an email with all the details |
+| **WhatsApp Link** | One-click button to send your order info to the shop on WhatsApp |
+| **User Accounts** | Sign up, log in, see your profile, change your password |
+| **Contact Form** | Have a question? Send a message directly to the shop |
+| **Newsletter** | Enter your email to get news and deals from the shop |
 
----
+## How Is This Website Built?
 
-## ✨ Features
+This project has **two big parts** that work together, like a restaurant:
 
-### 🛒 E-Commerce Core
+- **The Frontend** = the dining room (what customers see -- the menu, tables, decorations)
+- **The Backend** = the kitchen (where the food is actually made -- you don't see it, but it does all the work)
 
-- **Product Catalog**: Browse products by category, brand, occasion, and collections
-- **Product Details**: Comprehensive product pages with images, descriptions, and reviews
-- **Search & Filters**: Advanced search with filtering capabilities
-- **Shopping Cart**: Add, remove, and manage items in cart
-- **Wishlist**: Save favorite products for later
-- **Checkout**: Secure checkout process with order management
+### The Frontend (What You See in Your Browser)
 
-### 👤 User Features
+| Tool | What It Does (Simple Version) |
+|------|-------------------------------|
+| **React 19** | Builds all the pages, buttons, and forms you see and click on |
+| **TypeScript** | Like a spell-checker for code -- catches mistakes before they cause problems |
+| **Vite** | Makes the website load super fast while we're building it |
+| **Tailwind CSS** | Makes everything look pretty -- colors, spacing, fonts, shadows |
+| **DaisyUI** | Ready-made beautiful buttons, cards, and other building blocks |
+| **React Router 7** | Lets you go to different pages (Home, Cart, Checkout) without the whole page reloading |
+| **TanStack Query** | Fetches data from the server and remembers it, so pages load faster next time |
+| **Heroicons** | The cute little icons everywhere (shopping cart, heart, search magnifying glass) |
 
-- **Authentication**: User registration and login with JWT
-- **User Profile**: Manage account settings and preferences
-- **Order Tracking**: Track order status and delivery
-- **Order History**: View past orders and receipts
+### The Backend (The Brain Behind the Scenes)
 
-### 🎨 UI/UX
+| Tool | What It Does (Simple Version) |
+|------|-------------------------------|
+| **Express.js** | The waiter -- takes your request, goes to the kitchen, and brings back what you asked for |
+| **TypeScript** | Same spell-checker for code, on the server side too |
+| **MySQL** | The filing cabinet where ALL data is stored (products, users, orders, everything) |
+| **JWT (JSON Web Tokens)** | When you log in, the server gives you a special invisible wristband (token) that proves you're you |
+| **bcryptjs** | Scrambles your password into unreadable gibberish so even if someone hacks the database, they can't read it |
+| **Zod** | A security guard that checks if the data you send makes sense (is that really an email address?) |
+| **Nodemailer** | The mailman -- sends emails when orders are placed |
+| **Helmet** | A security helmet for the server -- protects against common hacking tricks |
+| **express-rate-limit** | Stops people from spamming the server with too many requests at once |
 
-- **Responsive Design**: Mobile-first, works on all devices
-- **Dark Mode**: Toggle between light and dark themes
-- **Multi-language Support**: Internationalization ready
-- **Loading States**: Smooth loading indicators
-- **Error Handling**: User-friendly error messages and boundaries
-- **SEO Optimized**: Meta tags and semantic HTML
+### How They All Talk to Each Other
 
-### 🚀 Performance
+```
+You (Browser)  -->  Frontend (React)  -->  Backend (Express)  -->  MySQL Database
+     ^                                                                    |
+     |____________________________________________________________________|
+                              Data comes back to you!
+```
 
-- **Data Prefetching**: Route loaders for faster page loads
-- **Query Caching**: Intelligent caching with TanStack Query
-- **Code Splitting**: Lazy loading for optimal bundle size
-- **Optimistic Updates**: Instant UI feedback
+Here's what happens when you open the website:
 
----
+1. You type the website address in your browser
+2. The **Frontend** (React) loads and shows you a beautiful page
+3. When you need to see products, the frontend says "Hey Backend, give me the products!"
+4. The **Backend** (Express) goes to the **MySQL Database** and says "Give me all the products"
+5. MySQL hands over the data
+6. The Backend sends it back to the Frontend
+7. The Frontend arranges it nicely and shows it to you
 
-## 🚀 Tech Stack
+It's like ordering food: You (customer) tell the waiter (Frontend), the waiter tells the chef (Backend), the chef gets ingredients from the fridge (Database), cooks the food, and the waiter brings it back to you!
 
-### Frontend
+## All the Pages on the Website
 
-| Technology               | Version | Purpose                 |
-| ------------------------ | ------- | ----------------------- |
-| **React**                | 19.2.0  | UI framework            |
-| **TypeScript**           | 5.9.3   | Type safety             |
-| **Vite**                 | 7.1.12  | Build tool & dev server |
-| **TanStack React Query** | 5.90.6  | Server state management |
-| **React Router**         | 7.9.5   | Client-side routing     |
-| **Tailwind CSS**         | 3.4.13  | Utility-first CSS       |
-| **DaisyUI**              | 5.3.7   | Component library       |
-| **Material Tailwind**    | 2.1.10  | Additional components   |
-| **Heroicons**            | 2.2.0   | Icon library            |
+| Page | URL | What It Shows |
+|------|-----|---------------|
+| Home | `/` | The main page with banners, featured products, categories |
+| Product Detail | `/product/:id` | Full details about one product (photos, price, sizes, add to cart) |
+| Categories | `/categories` | All product categories (Flowers, Cakes, Chocolates, etc.) |
+| Category Detail | `/categories/:slug` | All products in one category |
+| Occasions | `/occasions` | All occasions (Birthday, Wedding, Anniversary, etc.) |
+| Occasion Detail | `/occasions/:slug` | All products for one occasion |
+| Brands | `/brands` | All brands |
+| Brand Detail | `/brands/:slug` | Products from one brand |
+| Special Gifts | `/special-gifts` | Curated special gift collections |
+| Collection Detail | `/collections/:slug` | Products in a specific collection |
+| Best Sellers | `/best-sellers` | Most popular products |
+| Search | `/search` | Search results page |
+| Cart | `/cart` | Your shopping cart |
+| Checkout | `/checkout` | Fill in address and payment to place order |
+| Login | `/login` | Log into your account |
+| Register | `/register` | Create a new account |
+| Forgot Password | `/forgot-password` | Reset your password |
+| Wishlist | `/wishlist` | Your saved favorite items |
+| Profile | `/profile` | View and edit your account info |
+| Orders | `/orders` | See all your past orders |
+| Order Tracking | `/orders/:id` | Track a specific order |
+| Contact | `/contact` | Send a message to the shop |
+| FAQs | `/faqs` | Frequently asked questions |
+| Delivery Info | `/delivery` | Delivery areas and costs |
+| Track Order | `/track-order` | Track an order by receipt number |
+| About Us | `/about` | About the Wardity team |
+| Privacy Policy | `/privacy` | Privacy policy |
+| Terms | `/terms` | Terms and conditions |
 
-### Backend
-
-| Technology                  | Version | Purpose               |
-| --------------------------- | ------- | --------------------- |
-| **Express**                 | 4.18.2  | Web framework         |
-| **TypeScript**              | 5.3.3   | Type safety           |
-| **SQLite** (better-sqlite3) | 9.2.2   | Database              |
-| **JWT** (jsonwebtoken)      | 9.0.2   | Authentication        |
-| **bcryptjs**                | 2.4.3   | Password hashing      |
-| **Zod**                     | 3.22.4  | Schema validation     |
-| **CORS**                    | 2.8.5   | Cross-origin requests |
-
-### Development Tools
-
-- **ESLint**: 9.36.0 - Code linting
-- **TypeScript ESLint**: 8.46.2 - TypeScript-specific linting
-- **React Hooks ESLint**: 5.2.0 - React hooks validation
-- **PostCSS**: 8.5.6 - CSS processing
-- **Autoprefixer**: 10.4.21 - CSS vendor prefixes
-
----
-
-## 📁 Project Structure
+## Project Files (Where Is Everything?)
 
 ```
 Wardity/
-├── backend/                    # Backend API server
-│   ├── src/
-│   │   ├── database/          # Database initialization
-│   │   ├── middleware/        # Express middleware
-│   │   │   ├── auth.ts        # JWT authentication
-│   │   │   ├── errorHandler.ts
-│   │   │   └── notFoundHandler.ts
-│   │   ├── routes/            # API routes
-│   │   │   ├── auth.ts        # Authentication endpoints
-│   │   │   ├── products.ts    # Product endpoints
-│   │   │   ├── categories.ts  # Category endpoints
-│   │   │   ├── cart.ts        # Cart endpoints
-│   │   │   ├── wishlist.ts    # Wishlist endpoints
-│   │   │   ├── orders.ts      # Order endpoints
-│   │   │   └── occasions.ts   # Occasion endpoints
-│   │   └── utils/             # Utility functions
-│   │       ├── jwt.ts         # JWT helpers
-│   │       ├── password.ts    # Password hashing
-│   │       └── validation.ts  # Validation helpers
-│   ├── package.json
-│   └── tsconfig.json
-│
-├── src/                        # Frontend source code
-│   ├── assets/                # Static assets (images, fonts)
-│   ├── components/            # React components
-│   │   ├── features/          # Feature-specific components
-│   │   │   ├── ProductCard.tsx
-│   │   │   ├── CategoryCard.tsx
-│   │   │   ├── OccasionCard.tsx
-│   │   │   ├── HeroBanner.tsx
-│   │   │   └── ChatWidget.tsx
-│   │   ├── layout/            # Layout components
-│   │   │   ├── Header.tsx
-│   │   │   └── Footer.tsx
-│   │   └── ui/                # Reusable UI components
-│   │       ├── Button.tsx
-│   │       ├── Card.tsx
-│   │       ├── Input.tsx
-│   │       ├── LoadingSpinner.tsx
-│   │       ├── ErrorBlock.tsx
-│   │       └── ErrorBoundary.tsx
-│   ├── config/                # Configuration
-│   │   └── env.ts             # Environment variables
-│   ├── constants/             # Application constants
-│   │   ├── routes.ts          # Route definitions
-│   │   ├── api.ts             # API endpoints
-│   │   ├── storage.ts         # LocalStorage keys
-│   │   └── pagination.ts      # Pagination defaults
-│   ├── contexts/              # React contexts
-│   │   ├── AuthContext.tsx    # Authentication state
-│   │   ├── CartContext.tsx    # Shopping cart state
-│   │   ├── WishlistContext.tsx
-│   │   ├── LanguageContext.tsx
-│   │   └── DeliveryLocationContext.tsx
-│   ├── hooks/                 # Custom React hooks
-│   │   ├── useDebounce.ts
-│   │   ├── useLocalStorage.ts
-│   │   ├── useMediaQuery.ts
-│   │   └── useDarkMode.ts
-│   ├── layouts/               # Layout components
-│   │   └── RootLayout.tsx
-│   ├── pages/                 # Route pages
-│   │   ├── Home.tsx
-│   │   ├── Product.tsx
-│   │   ├── Cart.tsx
-│   │   ├── Checkout.tsx
-│   │   ├── Profile.tsx
-│   │   └── ...
-│   ├── router/                # Router configuration
-│   │   ├── index.tsx          # Router setup
-│   │   └── loaders.ts         # Route loaders
-│   ├── services/              # API & data services
-│   │   ├── api.ts             # API client
-│   │   ├── queryClient.ts     # React Query config
-│   │   └── queries/           # React Query hooks
-│   │       ├── productQueries.ts
-│   │       ├── categoryQueries.ts
-│   │       ├── cartQueries.ts
-│   │       └── wishlistQueries.ts
-│   ├── types/                 # TypeScript types
-│   │   ├── api.ts             # API types
-│   │   ├── product.ts         # Product types
-│   │   ├── category.ts        # Category types
-│   │   ├── cart.ts            # Cart types
-│   │   └── common.ts          # Common types
-│   ├── utils/                 # Utility functions
-│   │   ├── formatters.ts      # Data formatting
-│   │   └── share.ts           # Share utilities
-│   ├── main.tsx               # Entry point
-│   └── index.css              # Global styles
-│
-├── public/                    # Public static files
-├── dist/                      # Production build output
-├── package.json               # Frontend dependencies
-├── vite.config.ts             # Vite configuration
-├── tailwind.config.js         # Tailwind configuration
-├── tsconfig.json              # TypeScript configuration
-└── README.md                  # This file
+|
+|-- backend/                  <-- The server (the kitchen)
+|   |-- src/
+|   |   |-- database/        <-- Sets up MySQL connection and creates tables
+|   |   |-- middleware/       <-- Security guards (checks login, handles errors)
+|   |   |-- routes/           <-- All API endpoints (auth, products, cart, orders, etc.)
+|   |   |-- scripts/          <-- The seed script that fills the database with sample data
+|   |   |-- utils/            <-- Helper tools (tokens, passwords, emails, shipping)
+|   |   |-- index.ts          <-- The main file that starts the server
+|   |-- .env                  <-- Your secret settings (NEVER share this!)
+|   |-- .env.example          <-- A template showing what settings you need
+|   |-- package.json          <-- Lists all backend packages
+|
+|-- src/                       <-- The frontend (the dining room)
+|   |-- components/           <-- Reusable pieces (buttons, cards, header, footer)
+|   |   |-- features/        <-- Special components (ProductCard, HeroBanner, ChatWidget)
+|   |   |-- layout/          <-- Header and Footer
+|   |   |-- ui/              <-- Basic building blocks (Button, Input, LoadingSpinner)
+|   |-- pages/                <-- Full pages (Home, Product, Cart, Checkout, etc.)
+|   |-- services/             <-- Code that talks to the backend API
+|   |-- contexts/             <-- Shared state (who's logged in, what's in the cart)
+|   |-- hooks/                <-- Custom tools (debounce, local storage, media queries)
+|   |-- types/                <-- TypeScript type definitions
+|   |-- utils/                <-- Helper functions (formatting, shipping calculator)
+|   |-- router/               <-- Which URL shows which page
+|   |-- config/               <-- Environment settings
+|   |-- constants/            <-- Fixed values (route paths, API URLs, storage keys)
+|   |-- layouts/              <-- Page wrappers (header + content + footer)
+|   |-- assets/               <-- Images, fonts, static files
+|
+|-- docs/                      <-- All documentation lives here
+|-- package.json               <-- Frontend packages
+|-- vite.config.ts             <-- Frontend build settings + proxy to backend
+|-- tailwind.config.js         <-- Tailwind CSS design settings
 ```
 
----
+## How to Run This Project on Your Computer
 
-## 🚀 Getting Started
+### What You Need First
 
-### Prerequisites
+| Tool | Why You Need It | Where to Get It |
+|------|----------------|-----------------|
+| **Node.js 18+** | Runs all the code | https://nodejs.org (click the big green button) |
+| **MySQL** | Stores all the data | Download XAMPP from https://www.apachefriends.org |
+| **A code editor** | To look at and edit the code | We recommend [Cursor](https://cursor.com) or [VS Code](https://code.visualstudio.com) |
 
-- **Node.js**: 18.0.0 or higher
-- **npm**: 9.0.0 or higher (or yarn/pnpm)
-- **Git**: For cloning the repository
+### Step-by-Step Setup
 
-### Installation
+#### Step 1: Start MySQL
 
-1. **Clone the repository**
+- Open **XAMPP Control Panel**
+- Click **Start** next to **MySQL**
+- Wait until the light turns green (that means it's running!)
 
-   ```bash
-   git clone https://github.com/yourusername/wardity.git
-   cd wardity
-   ```
+#### Step 2: Create the Database
 
-2. **Install frontend dependencies**
+Open a terminal and type:
 
-   ```bash
-   npm install
-   ```
+```bash
+mysql -u root -p
+```
 
-3. **Install backend dependencies**
+Type your MySQL password (if you never set one, just press Enter). Then type:
 
-   ```bash
-   cd backend
-   npm install
-   cd ..
-   ```
+```sql
+CREATE DATABASE wardity CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+EXIT;
+```
 
-4. **Set up environment variables**
+#### Step 3: Install All Packages
 
-   Create a `.env` file in the root directory:
+```bash
+npm install
+cd backend
+npm install
+cd ..
+```
 
-   ```env
-   # Frontend (.env)
-   VITE_API_URL=http://localhost:3000/api
-   ```
+#### Step 4: Create the Secret Settings File
 
-   Create a `.env` file in the `backend/` directory:
+```bash
+cd backend
+copy .env.example .env
+```
 
-   ```env
-   # Backend (backend/.env)
-   PORT=3000
-   JWT_SECRET=your-super-secret-jwt-key-change-in-production
-   NODE_ENV=development
-   ```
+Now open `backend/.env` and fill in your real values (see the [Backend Setup Guide](./docs/BACKEND_SETUP.md) for details).
 
-5. **Initialize the database** (if needed)
-   ```bash
-   cd backend
-   npm run seed  # If seed script exists
-   ```
+#### Step 5: Fill the Database with Sample Data
 
-### Running the Application
+```bash
+cd backend
+npm run seed
+```
 
-#### Development Mode
+You should see: "Database seeded successfully!"
 
-**Terminal 1 - Start Backend:**
+#### Step 6: Start Both Servers
 
+Open **two terminals** side by side:
+
+**Terminal 1 (Backend):**
 ```bash
 cd backend
 npm run dev
 ```
+You should see: "Server running on http://localhost:3001"
 
-Backend will run on `http://localhost:3000`
-
-**Terminal 2 - Start Frontend:**
-
+**Terminal 2 (Frontend):**
 ```bash
 npm run dev
 ```
+You should see: "Local: http://localhost:5173"
 
-Frontend will run on `http://localhost:5173` (or the next available port)
+#### Step 7: Open the Website!
 
-#### Production Build
+Go to http://localhost:5173 in your browser. That's your website!
 
-**Build Frontend:**
+### Test Account
+
+After seeding, you can log in with:
+- **Email:** test@example.com
+- **Password:** password123
+
+## Useful Commands
+
+### Frontend (run from project root)
+
+| Command | What It Does |
+|---------|-------------|
+| `npm run dev` | Start the website for development |
+| `npm run build` | Build the website for production (makes it ready for the real internet) |
+| `npm run preview` | Preview the production build locally |
+| `npm run lint` | Check code for mistakes |
+
+### Backend (run from `backend/` folder)
+
+| Command | What It Does |
+|---------|-------------|
+| `npm run dev` | Start the server (auto-restarts when you change code) |
+| `npm run build` | Compile TypeScript to JavaScript for production |
+| `npm start` | Start the production server |
+| `npm run seed` | Fill the database with sample data (resets everything!) |
+| `npm run typecheck` | Check for TypeScript errors without running anything |
+
+## Documentation
+
+We have detailed guides for everything! Check the `docs/` folder:
+
+| Document | What It Explains |
+|----------|-----------------|
+| [Backend Setup](./docs/BACKEND_SETUP.md) | How to set up the backend server step by step |
+| [Frontend Setup](./docs/FRONTEND_SETUP.md) | How to set up the frontend website step by step |
+| [Database Guide](./docs/DATABASE_GUIDE.md) | All the database tables explained simply |
+| [API Reference](./docs/API_REFERENCE.md) | Every backend endpoint with examples |
+| [Project Structure](./docs/PROJECT_STRUCTURE.md) | What every file and folder does |
+| [Free Deployment Guide](./docs/FREE_DEPLOYMENT_GUIDE.md) | How to put this website on the real internet for FREE |
+
+## Troubleshooting (Common Problems)
+
+### "Port already in use"
+
+Something else is using port 3001 or 5173. In the terminal:
 
 ```bash
-npm run build
+netstat -ano | findstr :3001
+taskkill /F /PID <the-number-you-see>
 ```
 
-**Build Backend:**
+### "Access denied" when connecting to MySQL
 
-```bash
-cd backend
-npm run build
-```
+Your MySQL password in `backend/.env` is wrong. Open it and fix `DB_PASSWORD`.
 
-**Start Production Server:**
+### Products not showing up
 
-```bash
-cd backend
-npm start
-```
+Make sure BOTH servers are running (backend on 3001, frontend on 5173). Check the backend terminal for red error messages.
 
-**Preview Production Build:**
+### Emails not sending
 
-```bash
-npm run preview
-```
+Check the backend terminal for `[Email] Failed...` messages. Usually means the Gmail App Password is wrong. See the [Backend Setup Guide](./docs/BACKEND_SETUP.md) for Gmail setup instructions.
 
----
+### "Authentication required" on checkout
 
-## 💻 Development
+You need to log in first! Go to `/login` and use the test account or create a new one.
 
-### Available Scripts
+## Contact
 
-#### Frontend Scripts
+- **WhatsApp:** +20 111 523 9553
+- **WhatsApp:** +20 112 471 3292
+- **Email:** abdalrahmanamr275@gmail.com
+- **Email:** mahmoud.eldeep99amr@gmail.com
 
-| Script            | Description                              |
-| ----------------- | ---------------------------------------- |
-| `npm run dev`     | Start development server with hot reload |
-| `npm run build`   | Build for production                     |
-| `npm run preview` | Preview production build locally         |
-| `npm run lint`    | Run ESLint to check code quality         |
+## License
 
-#### Backend Scripts
-
-| Script              | Description                                          |
-| ------------------- | ---------------------------------------------------- |
-| `npm run dev`       | Start development server with hot reload (tsx watch) |
-| `npm run build`     | Compile TypeScript to JavaScript                     |
-| `npm start`         | Start production server                              |
-| `npm run seed`      | Seed database with initial data                      |
-| `npm run typecheck` | Type check without emitting files                    |
-
-### Development Workflow
-
-1. **Create a feature branch**
-
-   ```bash
-   git checkout -b feature/your-feature-name
-   ```
-
-2. **Make your changes**
-
-   - Follow the code standards below
-   - Write clean, type-safe code
-   - Add comments for complex logic
-
-3. **Test your changes**
-
-   ```bash
-   npm run lint
-   npm run build  # Ensure build succeeds
-   ```
-
-4. **Commit your changes**
-
-   ```bash
-   git add .
-   git commit -m "feat: add your feature description"
-   ```
-
-5. **Push and create a pull request**
-
-### Code Standards
-
-#### Component Structure
-
-All components follow this structure:
-
-```typescript
-import { FC } from "react";
-import { useQuery } from "@tanstack/react-query";
-
-interface ComponentProps {
-  id: string;
-  onUpdate?: (data: DataType) => void;
-}
-
-export const Component: FC<ComponentProps> = ({ id, onUpdate }) => {
-  // 1. Hooks first (in order: router, query, state, refs, effects)
-  const navigate = useNavigate();
-  const { data, isLoading, error } = useQuery({
-    queryKey: ["resource", id],
-    queryFn: () => fetchResource(id),
-  });
-  const [isOpen, setIsOpen] = useState(false);
-
-  // 2. Event handlers
-  const handleClick = (): void => {
-    setIsOpen(true);
-  };
-
-  // 3. Conditional renders (early returns)
-  if (isLoading) return <LoadingSpinner />;
-  if (error) return <ErrorBlock error={error} />;
-
-  // 4. Main render
-  return <div>{/* component JSX */}</div>;
-};
-```
-
-#### TypeScript Standards
-
-✅ **ALWAYS:**
-
-- Define interfaces for all props, state, and API responses
-- Use explicit return types for functions
-- Use `unknown` instead of `any` when type is unclear
-- Organize types by domain in separate files
-
-❌ **NEVER:**
-
-- Use `any` type
-- Leave implicit types on function parameters
-- Skip interface definitions for props
-
-#### Data Fetching
-
-✅ **ALWAYS use TanStack Query:**
-
-- Use `useQuery` for GET requests
-- Use `useMutation` for POST/PUT/DELETE requests
-- Use query keys factory pattern
-- Invalidate queries after mutations
-
-❌ **NEVER:**
-
-- Use `useEffect` + `fetch` for data fetching
-- Manually manage loading/error states
-- Forget to invalidate queries after mutations
-
-#### Styling
-
-✅ **PRIMARY: Tailwind Utilities**
-
-```tsx
-<div className="flex items-center justify-between p-4 bg-white rounded-lg shadow-md">
-  <h2 className="text-xl font-bold text-gray-800">Title</h2>
-</div>
-```
-
-✅ **SECONDARY: DaisyUI** (when explicitly requested)
-
-```tsx
-<button className="btn btn-primary">Click Me</button>
-```
-
-❌ **NEVER:**
-
-- Write custom CSS files
-- Use inline styles (except dynamic values)
-- Use CSS modules
-
----
-
-## 📡 API Documentation
-
-### Base URL
-
-- **Development**: `http://localhost:3000/api`
-- **Production**: `https://your-domain.com/api`
-
-### Authentication
-
-Most endpoints require authentication via JWT token. Include the token in the Authorization header:
-
-```
-Authorization: Bearer <your-jwt-token>
-```
-
-### Endpoints
-
-#### Authentication
-
-| Method | Endpoint         | Description       | Auth Required |
-| ------ | ---------------- | ----------------- | ------------- |
-| POST   | `/auth/register` | Register new user | No            |
-| POST   | `/auth/login`    | Login user        | No            |
-| GET    | `/auth/me`       | Get current user  | Yes           |
-
-#### Products
-
-| Method | Endpoint                         | Description              | Auth Required |
-| ------ | -------------------------------- | ------------------------ | ------------- |
-| GET    | `/products`                      | Get all products         | No            |
-| GET    | `/products/:id`                  | Get product by ID        | No            |
-| GET    | `/products/category/:categoryId` | Get products by category | No            |
-| GET    | `/products/search?q=query`       | Search products          | No            |
-
-#### Categories
-
-| Method | Endpoint          | Description        | Auth Required |
-| ------ | ----------------- | ------------------ | ------------- |
-| GET    | `/categories`     | Get all categories | No            |
-| GET    | `/categories/:id` | Get category by ID | No            |
-
-#### Cart
-
-| Method | Endpoint        | Description           | Auth Required |
-| ------ | --------------- | --------------------- | ------------- |
-| GET    | `/cart`         | Get user's cart       | Yes           |
-| POST   | `/cart`         | Add item to cart      | Yes           |
-| PUT    | `/cart/:itemId` | Update cart item      | Yes           |
-| DELETE | `/cart/:itemId` | Remove item from cart | Yes           |
-
-#### Wishlist
-
-| Method | Endpoint            | Description               | Auth Required |
-| ------ | ------------------- | ------------------------- | ------------- |
-| GET    | `/wishlist`         | Get user's wishlist       | Yes           |
-| POST   | `/wishlist`         | Add item to wishlist      | Yes           |
-| DELETE | `/wishlist/:itemId` | Remove item from wishlist | Yes           |
-
-#### Orders
-
-| Method | Endpoint            | Description        | Auth Required |
-| ------ | ------------------- | ------------------ | ------------- |
-| GET    | `/orders`           | Get user's orders  | Yes           |
-| GET    | `/orders/:id`       | Get order by ID    | Yes           |
-| POST   | `/orders`           | Create new order   | Yes           |
-| GET    | `/orders/:id/track` | Track order status | Yes           |
-
-### Example Request
-
-```typescript
-// Using the API client
-import { api } from "@/services/api";
-
-// Get products
-const products = await api.get("/products");
-
-// Add to cart (requires auth)
-const cartItem = await api.post("/cart", {
-  productId: "prod_123",
-  quantity: 2,
-});
-```
-
----
-
-## 🧪 Testing
-
-### Running Tests
-
-```bash
-# Run all tests
-npm test
-
-# Run tests in watch mode
-npm test -- --watch
-
-# Run tests with coverage
-npm test -- --coverage
-```
-
-### Testing Best Practices
-
-- Write unit tests for utility functions
-- Write integration tests for API endpoints
-- Test component rendering and user interactions
-- Test error handling and edge cases
-- Aim for >80% code coverage
-
----
-
-## 🚀 Deployment
-
-### Frontend Deployment (Vercel/Netlify)
-
-1. **Build the project**
-
-   ```bash
-   npm run build
-   ```
-
-2. **Set environment variables** in your hosting platform:
-
-   - `VITE_API_URL`: Your backend API URL
-
-3. **Deploy** the `dist/` folder
-
-### Backend Deployment
-
-1. **Build the backend**
-
-   ```bash
-   cd backend
-   npm run build
-   ```
-
-2. **Set environment variables**:
-
-   - `PORT`: Server port
-   - `JWT_SECRET`: Strong secret key
-   - `NODE_ENV`: `production`
-
-3. **Start the server**
-   ```bash
-   npm start
-   ```
-
-### Docker Deployment (Optional)
-
-```dockerfile
-# Dockerfile example
-FROM node:18-alpine
-WORKDIR /app
-COPY package*.json ./
-RUN npm ci --only=production
-COPY . .
-RUN npm run build
-EXPOSE 3000
-CMD ["npm", "start"]
-```
-
----
-
-## 🤝 Contributing
-
-We welcome contributions! Please follow these guidelines:
-
-### Contribution Process
-
-1. **Fork the repository**
-2. **Create a feature branch**
-
-   ```bash
-   git checkout -b feature/amazing-feature
-   ```
-
-3. **Follow code standards**
-
-   - Use TypeScript strictly
-   - Follow component structure guidelines
-   - Write meaningful commit messages
-   - Keep components under 200 lines
-
-4. **Test your changes**
-
-   - Run `npm run lint`
-   - Ensure build succeeds
-   - Test manually in browser
-
-5. **Commit your changes**
-
-   ```bash
-   git commit -m "feat: add amazing feature"
-   ```
-
-6. **Push to your branch**
-
-   ```bash
-   git push origin feature/amazing-feature
-   ```
-
-7. **Open a Pull Request**
-
-### Commit Message Format
-
-- `feat:` New feature
-- `fix:` Bug fix
-- `docs:` Documentation changes
-- `style:` Code style changes (formatting)
-- `refactor:` Code refactoring
-- `test:` Adding tests
-- `chore:` Maintenance tasks
-
-### Code Review Checklist
-
-- [ ] Code follows project standards
-- [ ] TypeScript types are properly defined
-- [ ] No `any` types used
-- [ ] Components are properly structured
-- [ ] Error handling is implemented
-- [ ] Loading states are handled
-- [ ] Code is tested
-- [ ] Documentation is updated
-
----
-
-## 🔧 Troubleshooting
-
-### Common Issues
-
-#### Frontend won't start
-
-**Issue**: Port already in use
-
-```bash
-# Solution: Kill process on port 5173
-# Windows
-netstat -ano | findstr :5173
-taskkill /PID <PID> /F
-
-# Mac/Linux
-lsof -ti:5173 | xargs kill
-```
-
-#### Backend connection errors
-
-**Issue**: CORS errors or connection refused
-
-- Check that backend is running on correct port
-- Verify `VITE_API_URL` in `.env` matches backend URL
-- Check CORS configuration in backend
-
-#### Build errors
-
-**Issue**: TypeScript errors
-
-```bash
-# Check for type errors
-npm run typecheck
-
-# Fix linting issues
-npm run lint -- --fix
-```
-
-#### Database issues
-
-**Issue**: Database not initialized
-
-```bash
-cd backend
-npm run seed  # If seed script exists
-# Or manually initialize database
-```
-
-### Getting Help
-
-- Check existing [Issues](https://github.com/yourusername/wardity/issues)
-- Search [Discussions](https://github.com/yourusername/wardity/discussions)
-- Create a new issue with:
-  - Description of the problem
-  - Steps to reproduce
-  - Expected vs actual behavior
-  - Environment details (OS, Node version, etc.)
-
----
-
-## 📚 Resources
-
-### Documentation
-
-- [React Documentation](https://react.dev)
-- [TanStack Query](https://tanstack.com/query/latest)
-- [React Router](https://reactrouter.com)
-- [Tailwind CSS](https://tailwindcss.com)
-- [TypeScript](https://www.typescriptlang.org)
-- [Vite](https://vitejs.dev)
-- [Express](https://expressjs.com)
-
-### Learning Resources
-
-- [React Query Essentials](https://tanstack.com/query/latest/docs/react/overview)
-- [TypeScript Handbook](https://www.typescriptlang.org/docs/handbook/intro.html)
-- [Tailwind CSS Documentation](https://tailwindcss.com/docs)
-
----
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
-
-## 🙏 Acknowledgments
-
-- Built with [React](https://react.dev) and [TypeScript](https://www.typescriptlang.org)
-- Styled with [Tailwind CSS](https://tailwindcss.com)
-- Icons by [Heroicons](https://heroicons.com)
-- Powered by [Vite](https://vitejs.dev)
-
----
-
-## 📞 Contact
-
-- **Project Repository**: [GitHub](https://github.com/yourusername/wardity)
-- **Issues**: [GitHub Issues](https://github.com/yourusername/wardity/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/yourusername/wardity/discussions)
-
----
-
-**Made with ❤️ using React, TypeScript, and modern web technologies**
+This project is licensed under the MIT License. That means anyone can use it, change it, and share it for free!
